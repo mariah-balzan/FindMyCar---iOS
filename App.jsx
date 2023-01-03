@@ -9,10 +9,6 @@ import LoginRegister from './Screens/LoginRegister';
 import HomeScreen from './Screens/HomeScreen';
 import SignupScreen from './Screens/SignupScreen';
 
-//web: 959635901076-hc3911ksrgsjranm867udh81k199epda.apps.googleusercontent.com
-//iOS: 959635901076-5qngqm5n7knqi8ksivm2g119v2b2quna.apps.googleusercontent.com
-//android: 959635901076-ni7467l1pmqka44to5has88eod6k4qgo.apps.googleusercontent.com
-
 //Create instance of StackNavigator
 const Stack = createNativeStackNavigator();
 //const [isFirstLaunch, setIsFirstLaunch] = useState(null);
