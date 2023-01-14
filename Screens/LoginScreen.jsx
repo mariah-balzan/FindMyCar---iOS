@@ -58,7 +58,9 @@ export default function LoginScreen ({navigation}){
     // </KeyboardAvoidingView>
     <KeyboardAvoidingView style = {styles.container}>
     <ImageBackground source={require("../assets/loginRegister.png")} style={{width: width, height: height/2,resizeMode: 'stretch'}}>
+      <TouchableOpacity onPress={() => navigation.navigate("LoginRegister") }>
       <Image source={require("../assets/back-white.png")} style={styles.backIcon} />
+        </TouchableOpacity>
       <View style={styles.logo}>
           <Image style={{width:80, height:90}}source= {require("../assets/pin.png")} />
           <Text style= {styles.title}>Welcome back!</Text>  

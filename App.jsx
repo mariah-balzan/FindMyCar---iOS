@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Onboarding from './Screens/OnBoarding';
 import LoginScreen from './Screens/LoginScreen';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginRegister from './Screens/LoginRegister';
 import HomeScreen from './Screens/HomeScreen';
@@ -11,15 +11,29 @@ import SignupScreen from './Screens/SignupScreen';
 
 //Create instance of StackNavigator
 const Stack = createNativeStackNavigator();
-//const [isFirstLaunch, setIsFirstLaunch] = useState(null);
 
 export default function App() {
+  // const [isFirstLaunch, setIsFirstLaunch] = useState(null);
 
-  return(
-    <NavigationContainer>
-        {/* Removes the top title and expands screen area */}
-         <Stack.Navigator screenOptions={{headerShown: false}}>
-         <Stack.Screen
+  // useEffect(() => {
+  //   AsyncStorage.getItem('alreadyLaunched').then(value => {
+  //     if(value == null){
+  //       AsyncStorage.setItem('alreadyLaunched', 'true');
+  //       setIsFirstLaunch(true);
+  //     }else{
+  //       setIsFirstLaunch(false);
+  //     }
+  //   })
+  // }, [])
+
+  //   if(isFirstLaunch == null){
+  //       return null;
+  // }else if(isFirstLaunch == true){
+    return(
+      <NavigationContainer>
+            {/* Removes the top title and expands screen area */}
+          <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen
             name = "Onboarding"
             component = {Onboarding}
             />
@@ -39,46 +53,13 @@ export default function App() {
             name = "Home"
             component = {HomeScreen}
             />
-      </Stack.Navigator>
+          </Stack.Navigator>
       </NavigationContainer>
-  )
-//   const [isFirstLaunch, setIsFirstLaunch] = React.useState(null);
-
-//   useEffect(() => {
-//     AsyncStorage.getItem('alreadyLaunched').then(value => {
-//       if(value == null){
-//         AsyncStorage.setItem('alreadyLaunched', 'true');
-//         setIsFirstLaunch(true);
-//       }else{
-//         setIsFirstLaunch(false);
-//       }
-//     })
-//   }, [])
-
-// if(isFirstLaunch == null){
-//   return null;
-// }else if(isFirstLaunch == true){
-//   return(
-//     <NavigationContainer>
-//     {/* Removes the top title and expands screen area */}
-//     <Stack.Navigator screenOptions={{headerShown: false}}>
-//     <Stack.Screen
-//         name = "Onboarding"
-//         component = {Onboarding}
-        
-//         />
-//         <Stack.Screen
-//         name = "Login"
-//         component = {LoginScreen}
-//         />
-
-//   </Stack.Navigator>
-//   </NavigationContainer>
-//   );
-// }else{
-//   return <LoginScreen/>
-// }
-}
+        );
+      // }else{
+      //   return <LoginRegister/>
+      // }
+  }
 
 const styles = StyleSheet.create({
   container: {

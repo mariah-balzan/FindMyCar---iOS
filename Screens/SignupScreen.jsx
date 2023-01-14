@@ -5,6 +5,7 @@ import { auth } from "../firebase";
 const { width } = Dimensions.get('screen');
 const { height } = Dimensions.get('screen');
 export default function SignupScreen ({navigation}){
+  
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
       
@@ -28,7 +29,9 @@ export default function SignupScreen ({navigation}){
     return(
       <KeyboardAvoidingView style = {styles.container}>
       <ImageBackground source={require("../assets/loginRegister.png")} style={{width: width, height: height/2,resizeMode: 'stretch'}}>
-        <Image source={require("../assets/back-white.png")} style={styles.backIcon} />
+        <TouchableOpacity onPress={() => navigation.navigate("LoginRegister") }>
+        <Image source={require("../assets/back-white.png")} style={styles.backIcon}/>
+        </TouchableOpacity>
         <View style={styles.logo}>
             <Image style={{width:80, height:90}}source= {require("../assets/pin.png")} />
             <Text style= {styles.title}>Welcome!</Text>  
@@ -53,13 +56,12 @@ export default function SignupScreen ({navigation}){
                     secureTextEntry
                 />
              </View>
-             
                 <TouchableOpacity   
                     onPress={handleSignUp}
                     style={styles.button}>
                     <Text style = {styles.buttonOutlineText}>Register</Text>
                 </TouchableOpacity>
-      </View>
+        </View>
   </KeyboardAvoidingView>
     )
 }
