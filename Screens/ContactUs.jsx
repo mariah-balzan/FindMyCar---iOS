@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import themeContext from '../theme/themeContext';
 import theme from '../theme/theme';
 import CustomBtn from '../components/CustomBtn';
+import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
 
 const ContactUs = () => {
   const [message, setMessage] = useState('');
@@ -12,6 +13,9 @@ const ContactUs = () => {
   }
 
   return (
+    <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        style={{ flex: 1}}>
     <View style={[styles.container, {backgroundColor:theme.backgroundColor}]}>
             <Text style={[styles.title]}>Contact Us</Text>
             <Text style={[styles.heading]}>Type your message below:</Text>
@@ -27,6 +31,7 @@ const ContactUs = () => {
         onPress = {handleSubmit}
       />
     </View>
+    </KeyboardAvoidingView>
   );
 }
 
