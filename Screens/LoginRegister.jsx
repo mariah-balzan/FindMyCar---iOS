@@ -13,9 +13,9 @@ export default function LoginRegister ({navigation}){
     const [accessToken, setAccessToken] = useState(null);
     const [user, setUser] = useState(null);
     const [request, response, promptAsync] = Google.useAuthRequest({
-      clientId: '959635901076-hc3911ksrgsjranm867udh81k199epda.apps.googleusercontent.com',
-      iosClientId: '959635901076-5qngqm5n7knqi8ksivm2g119v2b2quna.apps.googleusercontent.com',
-      androidClientId: "959635901076-ni7467l1pmqka44to5has88eod6k4qgo.apps.googleusercontent.com"
+      clientId: "1084132337669-ridmqvmefpui7p0ahm4q1ff43apntqo3.apps.googleusercontent.com",
+      iosClientId: "1084132337669-somk2cjpc0v74vd3n07ths7gacoc85j0.apps.googleusercontent.com",
+      androidClientId: "1084132337669-uq6ndhrflsc7aprcahrvn986aful84rm.apps.googleusercontent.com"
     });
 
     useEffect(() => {
