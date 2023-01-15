@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import CustomBtn from '../components/CustomBtn';
+import themeContext from '../theme/themeContext';
+import theme from '../theme/theme';
 
 export default function ProfileScreen({ navigation }) {
 
@@ -21,8 +23,8 @@ export default function ProfileScreen({ navigation }) {
       .catch(error => alert(error.message))
   }
   return (
-    <View style={styles.container}>
-        <View style={styles.profile}>
+    <View style={[styles.container, {backgroundColor:theme.backgroundColor}]}>
+        <View style={[styles.profile, {backgroundColor:theme.backgroundColor}]}>
               <TouchableOpacity
                 onPress={() => {
                   // handle onPress
@@ -47,8 +49,8 @@ export default function ProfileScreen({ navigation }) {
                 </View>
               </TouchableOpacity>
     
-              <View style={styles.profileBody}>    
-                <Text style={styles.profileEmail}>
+              <View style={[styles.profileBody, {backgroundColor:theme.backgroundColor}]}>    
+                <Text style={[styles.profileEmail]}>
                     {auth.currentUser?.email}
                 </Text>
               </View>
