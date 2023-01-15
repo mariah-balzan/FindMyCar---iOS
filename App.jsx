@@ -3,8 +3,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Onboarding from './Screens/OnBoarding';
 import LoginScreen from './Screens/LoginScreen';
-import {useEffect, useState} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginRegister from './Screens/LoginRegister';
 import HomeScreen from './Screens/HomeScreen';
 import SignupScreen from './Screens/SignupScreen';

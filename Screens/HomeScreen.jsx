@@ -1,7 +1,5 @@
-import { TabActions, useNavigation } from '@react-navigation/core'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { auth } from '../firebase'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProfileScreen from './ProfileScreen';
@@ -30,25 +28,10 @@ const HomeStack = () => {
 }
 
 const HomeFunction = () => {
-  const navigation = useNavigation()
-
-  const handleSignOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.replace("Login")
-      })
-      .catch(error => alert(error.message))
-  }
   return (
-    <View style={styles.container}>
-          <Text>Email: {auth.currentUser?.email}</Text>      
-          <TouchableOpacity
-            onPress={handleSignOut}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Sign out</Text>
-          </TouchableOpacity>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text
+            style={{ fontSize: 26, fontWeight: 'bold' }}>Home Screen</Text>
     </View>
   );
 }
