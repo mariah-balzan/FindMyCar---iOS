@@ -1,49 +1,170 @@
-import React from "react";
-import {View, Text, Button, StyleSheet, TouchableOpacity} from "react-native";
-import { auth } from "../firebase";
+import { useRef, useState }  from 'react'
+import { StyleSheet, Text, View, Dimensions } from 'react-native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import ProfileScreen from './ProfileScreen';
+import SettingsScreen from './SettingsScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import FlashMessage from 'react-native-flash-message';
+import ChooseLocation from './ChooseLocation';
+import MapView, { Marker } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
+import CustomBtn from '../components/CustomBtn';
+// import {GOOGLE_MAPS_KEY} from '@env'
 
+const Tab = createBottomTabNavigator()
 
-
-export default function HomeScreen ({navigation}){
-
-    const handleSignOut = () => {
-        auth
-          .signOut()
-          .then(() => {
-            navigation.navigate("LoginRegister")
-          })
-          .catch(error => alert(error.message))
-      }
-    return(
-        <View style={styles.container}>
-      <Text>Email: {auth.currentUser?.email}</Text>
-      <TouchableOpacity
-        onPress={handleSignOut}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Sign out</Text>
-      </TouchableOpacity>
-    </View>
-    )
+const Home = () => {
+  return (
+    <>
+      <Tab.Navigator screenOptions={{headerShown: false}}>
+        <Tab.Screen name="Profile" component={ProfileStack} />
+        <Tab.Screen name="Home" component={HomeStack} />
+        <Tab.Screen name="Settings" component={SettingsStack} />
+      </Tab.Navigator>
+      <FlashMessage
+    position='top'
+  />
+      </>
+  );
 }
 
+const Stack = createNativeStackNavigator();
+
+const HomeStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Home" component={HomeFunction} options = {{headerShown:false}}/>
+      <Stack.Screen name="chooseLocation" component={ChooseLocation} options = {{headerShown:false}}/>
+    </Stack.Navigator>
+  );
+}
+
+const HomeFunction = ({navigation}) => {
+
+  const screen = Dimensions.get('window');
+  const ASPECT_RATIO = screen.width / screen.height;
+  const LATITUDE_DELTA = 0.04;
+  const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+  const [state, setState] = useState({
+    originCords: {
+      latitude: 35.902705,
+      longitude:14.483579,
+      latitudeDelta: 0.00922,
+      longitudeDelta: 0.00421,
+    },
+    destinationCords: {
+      latitude: 35.898020,
+      longitude:14.476714,
+        latitudeDelta: 0.00922,
+        longitudeDelta: 0.00421,
+    }
+  })
+  const { originCords, destinationCords } = state
+
+  const mapRef = useRef()
+  const carImage = require('../assets/car.png')
+
+  const onPressLocation = () => {
+    navigation.navigate("chooseLocation", {getCoordinates:fetchValues})
+  }
+
+  const fetchValues = (data) => {
+    setState({
+      originCords:{
+        latitude: data.originCords.latitude,
+        longitude: data.originCords.longitude,
+      },
+      destinationCords:{
+        latitude: data.destinationCords.latitude,
+        longitude: data.destinationCords.longitude,
+      }
+    })
+    console. log("data=>>>>>", data)
+}
+
+  return (
+    <View style={styles.container}>
+      <View style = {styles.bottomCard}>
+            <Text style = {{marginBottom:'5%', marginTop:'3%', color:'#FFB703', fontSize:'24', fontFamily:'Comfortaa'}}>Want to find your car?</Text>
+            <CustomBtn
+            btnText = "Choose your location"
+            btnStyle = {{width:'80%', marginBottom:'-3%'}}
+            onPress = {onPressLocation}
+      />
+          </View>
+      <View style ={{flex:1}}>
+      <MapView
+          ref={mapRef}
+          style={StyleSheet.absoluteFill}
+          initialRegion={{
+            ...originCords, 
+            latitudeDelta:LATITUDE_DELTA,
+            longitudeDelta:LONGITUDE_DELTA
+          }}
+          >
+          <Marker
+            coordinate={originCords}
+          />
+          <Marker
+          coordinate={destinationCords} 
+          image={carImage}/>
+
+          {/* <MapViewDirections
+            origin = {originCords}
+            destination={destinationCords}
+            apikey = {GOOGLE_MAPS_KEY}
+            strokeWidth={3}
+            strokeColor="#FFB703"
+            optimizeWaypoints={true}
+            onReady={result =>  {
+            mapRef.current.fitToCoordinates(result.coordinates, {
+                edgePadding: {
+                right: 30,
+                bottom: 300,
+                left: 30,
+                top: 100    
+                }
+               // animated:true
+          })
+        }} 
+            /> */}
+           
+          </MapView>
+          </View>
+    </View>
+  );
+}
+
+const ProfileStack = () => {
+  return (
+      <Stack.Navigator>
+        <Stack.Screen options = {{headerShown:false}} name="Profile" component={ProfileScreen} />
+      </Stack.Navigator>
+  );
+}
+
+const SettingsStack = () => {
+  return (
+      <Stack.Navigator>
+        <Stack.Screen options = {{headerShown:false}} name="Settings" component={SettingsScreen} />
+      </Stack.Navigator>
+  );
+}
+
+export default Home
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-      },
-       button: {
-        backgroundColor: '#0782F9',
-        width: '60%',
-        padding: 15,
-        borderRadius: 10,
-        alignItems: 'center',
-        marginTop: 40,
-      },
-      buttonText: {
-        color: 'white',
-        fontWeight: '700',
-        fontSize: 16,
-      },
-  });
+  container: {
+    flex: 1,
+  },
+  bottomCard:{
+    backgroundColor: 'white',
+    width: '100%',
+    padding: 30,
+    borderRadius:30,
+    paddingTop:'13%',
+    alignItems:'center'
+  },
+})
