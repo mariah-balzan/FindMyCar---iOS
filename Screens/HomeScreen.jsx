@@ -12,6 +12,7 @@ import CustomBtn from '../components/CustomBtn';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import themeContext from '../theme/themeContext';
 import theme from '../theme/theme';
+import ContactUs from './ContactUs';
 // import {GOOGLE_MAPS_KEY} from '@env'
 
 const Tab = createBottomTabNavigator();
@@ -172,6 +173,7 @@ const SettingsStack = () => {
   return (
       <Stack.Navigator>
         <Stack.Screen options = {{headerShown:false}} name="Settings" component={SettingsScreen} />
+        <Stack.Screen options = {{headerShown:false}} name="ContactUs" component={ContactUs} />
       </Stack.Navigator>
   );
 }

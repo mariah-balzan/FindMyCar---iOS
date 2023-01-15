@@ -79,7 +79,7 @@ export default function SettingsScreen({ navigation }) {
                         {type === 'boolean_text_to_speech' && <Switch
                           value = {value}
                         />}
-    
+                      <TouchableOpacity onPress={() => navigation.navigate("ContactUs")}>
                         {type === 'link' && (
                           <FeatherIcon
                             color="#5d5d5d"
@@ -87,6 +87,7 @@ export default function SettingsScreen({ navigation }) {
                             size={22}
                           />
                         )}
+                        </TouchableOpacity>
                       </View>
                     </TouchableOpacity>
                   );

@@ -25,6 +25,7 @@ export default function ProfileScreen({ navigation }) {
   return (
     <View style={[styles.container, {backgroundColor:theme.backgroundColor}]}>
         <View style={[styles.profile, {backgroundColor:theme.backgroundColor}]}>
+        <Text style={[styles.title]}>Profile</Text>
               <TouchableOpacity
                 onPress={() => {
                   // handle onPress
@@ -71,6 +72,11 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       paddingVertical: 24,
+    },
+    title: {
+      fontSize: 20,
+      margin: 30,
+      color: '#989898',
     },
      button: {
       backgroundColor: '#0782F9',
