@@ -53,12 +53,6 @@ export default function ProfileScreen({ navigation }) {
                 </Text>
               </View>
             </View>  
-        {/* <TouchableOpacity
-            onPress={handleSignOut}
-            style={styles.button}
-            >
-            <Text style={styles.buttonText}>Sign out</Text>
-        </TouchableOpacity> */}
         <CustomBtn
             btnText = "Sign Out"
             btnStyle = {{marginTop:'7%'}}
