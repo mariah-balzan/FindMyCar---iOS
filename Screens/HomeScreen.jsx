@@ -4,23 +4,42 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProfileScreen from './ProfileScreen';
 import SettingsScreen from './SettingsScreen';
-import { NavigationContainer } from '@react-navigation/native';
 import FlashMessage from 'react-native-flash-message';
 import ChooseLocation from './ChooseLocation';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import CustomBtn from '../components/CustomBtn';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 // import {GOOGLE_MAPS_KEY} from '@env'
 
-const Tab = createBottomTabNavigator()
+const Tab = createBottomTabNavigator();
+
 
 const Home = () => {
   return (
     <>
-      <Tab.Navigator screenOptions={{headerShown: false}}>
-        <Tab.Screen name="Profile" component={ProfileStack} />
-        <Tab.Screen name="Home" component={HomeStack} />
-        <Tab.Screen name="Settings" component={SettingsStack} />
+      <Tab.Navigator 
+       screenOptions={({ route}) => ({
+        tabBarIcon: ({ color, size }) => {
+          const icons = {
+            Home: 'home',
+            Profile: 'account',
+            Settings: 'cog-outline'
+          };
+    
+          return (
+            <MaterialCommunityIcons
+              name={icons[route.name]}
+              color= '#023047'
+              size= '24px'
+            />
+            // https://materialdesignicons.com/
+          );
+        },
+      })}>
+        <Tab.Screen options = {{headerShown:false}} name="Profile" component={ProfileStack} />
+        <Tab.Screen options = {{headerShown:false}} name="Home" component={HomeStack} />
+        <Tab.Screen options = {{headerShown:false}} name="Settings" component={SettingsStack} />
       </Tab.Navigator>
       <FlashMessage
     position='top'
