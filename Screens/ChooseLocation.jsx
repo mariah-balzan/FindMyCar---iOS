@@ -5,7 +5,9 @@ import { View, Text, StyleSheet, Dimensions, KeyboardAvoidingView, TouchableOpac
 import Coord from '../components/Coord';
 import CustomBtn from '../components/CustomBtn';
 import { showError, showSuccess } from '../helper/helperFunction';
-
+import themeContext from '../theme/themeContext';
+import theme from '../theme/theme';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const {height, width} = Dimensions.get('screen');
 export default function ChooseLocation(props) {
@@ -61,18 +63,22 @@ const onDone = () => {
     console.log("props =>" ,props)
   
 return(
-  <View style = {styles.container}>
+  <View style = {[styles.container, {backgroundColor:theme.backgroundColor}]}>
      <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : null}
         style={{ flex: 1}}>
            <TouchableOpacity onPress={() => navigation.navigate("Home") }>
-              <Image source={require("../assets/back-black.png")} style={styles.backIcon} />
+            <FeatherIcon
+              color="#FFB703"
+              name="chevron-left"
+              size={40}
+            />
           </TouchableOpacity>
-            <Coord
+            <Coord 
               placeholderText={"Enter origin"}
               fetchAddress={fetchAddressCords}
             />
-            <Coord
+            <Coord 
               placeholderText={"Enter destination"}
               fetchAddress={fetchDestinationCord}
             />

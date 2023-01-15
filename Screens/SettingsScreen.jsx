@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useContext, useState }  from 'react'
 import {
   StyleSheet,
   SafeAreaView,
@@ -9,6 +9,9 @@ import {
   Switch,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import { EventRegister } from 'react-native-event-listeners';
+import themeContext from '../theme/themeContext';
+import theme from '../theme/theme';
 
 const SECTIONS = [
     {
@@ -20,14 +23,14 @@ const SECTIONS = [
           color: '#007afe',
           label: 'Dark Mode',
           value: false,
-          type: 'boolean',
+          type: 'boolean_dark_mode',
         },
         {
           icon: 'volume-2',
           color: '#fd2d54',
           label: 'Text-to-speech',
           value: false,
-          type: 'boolean',
+          type: 'boolean_text_to_speech',
         },
         { icon: 'mail', 
         color: '#8e8d91', 
@@ -39,14 +42,16 @@ const SECTIONS = [
   ];  
 
 export default function SettingsScreen({ navigation }) {
+  const theme = useContext(themeContext)
+  const [darkMode, setDarkMode] = useState(false)
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-          <ScrollView contentContainerStyle={styles.container}>
+        <SafeAreaView style={[{ flex: 1 }, {backgroundColor:theme.backgroundColor}]}>
+          <ScrollView contentContainerStyle={[styles.container, {backgroundColor:theme.backgroundColor}]}>
             
     
             {SECTIONS.map(({ header, items }) => (
-              <View style={styles.section} key={header}>
-                <Text style={styles.sectionHeader}>{header}</Text>
+              <View style={[styles.section, {backgroundColor:theme.backgroundColor}]} key={header}>
+                <Text style={[styles.sectionHeader, {color:theme.color}]}>{header}</Text>
                 {items.map(({ label, icon, type, value, color }, index) => {
                   return (
                     <TouchableOpacity
@@ -54,20 +59,30 @@ export default function SettingsScreen({ navigation }) {
                       onPress={() => {
                         // handle onPress
                       }}>
-                      <View style={styles.row}>
+                      <View style={[styles.row, theme.coloricon]}>
                         <View style={[styles.rowIcon, { backgroundColor: color }]}>
                           <FeatherIcon color="#fff" name={icon} size={18} />
                         </View>
     
-                        <Text style={styles.rowLabel}>{label}</Text>
+                        <Text style={[styles.rowLabel, {color:theme.color}]}>{label}</Text>
     
-                        <View style={styles.rowSpacer} />
+                        <View style={[styles.rowSpacer, {backgroundColor:theme.backgroundColor}]} />
     
-                        {type === 'boolean' && <Switch value={value} />}
+                        {type === 'boolean_dark_mode' && <Switch
+                          value = {darkMode}
+                          onValueChange = {(value) => {
+                            setDarkMode(value);
+                            EventRegister.emit('ChangeTheme', value)
+                          }}
+                        />}
+
+                        {type === 'boolean_text_to_speech' && <Switch
+                          value = {value}
+                        />}
     
                         {type === 'link' && (
                           <FeatherIcon
-                            color="#0c0c0c"
+                            color="#5d5d5d"
                             name="chevron-right"
                             size={22}
                           />
@@ -142,11 +157,11 @@ export default function SettingsScreen({ navigation }) {
           alignItems: 'center',
           justifyContent: 'flex-start',
           height: 50,
-          backgroundColor: '#f2f2f2',
           borderRadius: 8,
           marginBottom: 12,
           paddingLeft: 12,
           paddingRight: 12,
+          borderStyle: 'solid'
         },
         rowIcon: {
           width: 32,

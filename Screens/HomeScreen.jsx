@@ -1,5 +1,5 @@
-import { useRef, useState }  from 'react'
-import { StyleSheet, Text, View, Dimensions } from 'react-native'
+import { useContext, useRef, useState }  from 'react'
+import { StyleSheet, Text, View, Dimensions, Switch } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProfileScreen from './ProfileScreen';
@@ -10,12 +10,14 @@ import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import CustomBtn from '../components/CustomBtn';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import themeContext from '../theme/themeContext';
+import theme from '../theme/theme';
 // import {GOOGLE_MAPS_KEY} from '@env'
 
 const Tab = createBottomTabNavigator();
 
-
 const Home = () => {
+  const theme = useContext(themeContext)
   return (
     <>
       <Tab.Navigator 
@@ -29,14 +31,15 @@ const Home = () => {
     
           return (
             <MaterialCommunityIcons
-              name={icons[route.name]}
-              color= '#023047'
-              size= '24px'
+              name ={icons[route.name]}
+              color = {theme.coloricon}
+              size = '24px'
             />
             // https://materialdesignicons.com/
           );
         },
-      })}>
+      })}
+      >
         <Tab.Screen options = {{headerShown:false}} name="Profile" component={ProfileStack} />
         <Tab.Screen options = {{headerShown:false}} name="Home" component={HomeStack} />
         <Tab.Screen options = {{headerShown:false}} name="Settings" component={SettingsStack} />
@@ -60,7 +63,7 @@ const HomeStack = () => {
 }
 
 const HomeFunction = ({navigation}) => {
-
+  const theme = useContext(themeContext)
   const screen = Dimensions.get('window');
   const ASPECT_RATIO = screen.width / screen.height;
   const LATITUDE_DELTA = 0.04;
@@ -104,18 +107,19 @@ const HomeFunction = ({navigation}) => {
 }
 
   return (
-    <View style={styles.container}>
-      <View style = {styles.bottomCard}>
-            <Text style = {{marginBottom:'5%', marginTop:'3%', color:'#FFB703', fontSize:'24', fontFamily:'Comfortaa'}}>Want to find your car?</Text>
+    <View style={[styles.container, {backgroundColor:theme.backgroundColor}]}>
+      <View style = {[styles.bottomCard, {backgroundColor:theme.backgroundColor}]}>
+            <Text style = {[styles.header, {color:theme.color}]}>Want to find your car?</Text>
             <CustomBtn
             btnText = "Choose your location"
             btnStyle = {{width:'80%', marginBottom:'-3%'}}
             onPress = {onPressLocation}
       />
           </View>
-      <View style ={{flex:1}}>
+      <View style ={[{flex:1}, {backgroundColor:theme.backgroundColor}]}>
       <MapView
           ref={mapRef}
+          userInterfaceStyle = {theme.userInterfaceStyle}
           style={StyleSheet.absoluteFill}
           initialRegion={{
             ...originCords, 
@@ -185,5 +189,12 @@ const styles = StyleSheet.create({
     borderRadius:30,
     paddingTop:'13%',
     alignItems:'center'
+  },
+  header: {
+    marginBottom:'5%', 
+    marginTop:'3%', 
+    color:'#FFB703', 
+    fontSize:'24', 
+    fontFamily:'Comfortaa'
   },
 })
