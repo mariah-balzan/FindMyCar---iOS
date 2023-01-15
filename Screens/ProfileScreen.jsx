@@ -8,6 +8,7 @@ import {
   Image,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import CustomBtn from '../components/CustomBtn';
 
 export default function ProfileScreen({ navigation }) {
 
@@ -15,7 +16,7 @@ export default function ProfileScreen({ navigation }) {
     auth
       .signOut()
       .then(() => {
-        navigation.replace("Login")
+        navigation.replace("LoginRegister")
       })
       .catch(error => alert(error.message))
   }
@@ -52,12 +53,17 @@ export default function ProfileScreen({ navigation }) {
                 </Text>
               </View>
             </View>  
-        <TouchableOpacity
+        {/* <TouchableOpacity
             onPress={handleSignOut}
             style={styles.button}
             >
             <Text style={styles.buttonText}>Sign out</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <CustomBtn
+            btnText = "Sign Out"
+            btnStyle = {{marginTop:'7%'}}
+            onPress = {handleSignOut}
+      />
     </View>
   );
 }
