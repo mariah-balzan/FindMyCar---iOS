@@ -27,38 +27,7 @@ export default function LoginScreen ({navigation}){
       }
   
       return(
-    //     <KeyboardAvoidingView
-    //     style = {styles.container}
-    //     behavior = "padding" >
-  
-    //   <View style={styles.inputContainer}> 
-    //     <TextInput
-    //         placeholder='Email'
-    //         value= {email}
-    //         onChangeText={text => setEmail(text)}
-    //         style={styles.input}
-    //     />
-    //     <TextInput
-    //         placeholder='Password'
-    //         value= {password}
-    //         onChangeText={text => setPassword(text)}
-    //         style={styles.input}
-    //         secureTextEntry
-    //     />
-    //   </View>
-  
-    //    <View style={styles.buttonContainer}> 
-    //     <TouchableOpacity
-    //         onPress={handleLogin}
-    //         style={styles.button}
-    //     >
-    //         <Text style = {styles.buttonText}>Login</Text>
-    //     </TouchableOpacity>
-    //   </View>
-    // </KeyboardAvoidingView>
-    <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : null}
-                style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : null}>
     <ImageBackground source={require("../assets/loginRegister.png")} style={{width: width, height: height/2,resizeMode: 'stretch'}}>
       <TouchableOpacity onPress={() => navigation.navigate("LoginRegister") }>
       <Image source={require("../assets/back-white.png")} style={styles.backIcon} />
