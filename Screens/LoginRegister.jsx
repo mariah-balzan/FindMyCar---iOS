@@ -50,9 +50,8 @@ export default function LoginRegister ({navigation}){
             <ImageBackground source={require("../assets/loginRegister.png")} style={{width: width, height: height,resizeMode: 'stretch'}}>
             <View style={styles.logo}>
                 <Image style={{width:110, height:150}}source= {require("../assets/pin.png")} />
-                {/* Either title or "Join our community" */}
-                <Text style= {styles.title}>Find my car</Text>  
-                <Text style= {styles.subtitle}>Connect your car now and easily find it later</Text>
+                <Text style= {styles.title}>TrackPal</Text>  
+                <Text style= {styles.subtitle}>Your virtual companion assisting you everyday, everywhere!</Text>
             </View>
             <View style = {styles.buttonContainer}>
                  <Pressable style={styles.registerButton}  onPress={() => navigation.navigate("Register")}>
@@ -105,15 +104,15 @@ const styles = StyleSheet.create({
     },
     subtitle:{
         color:'#ffff', 
-        fontSize:'19', 
+        fontSize:'20', 
         fontFamily:'Comfortaa', 
-        padding:'4%',
+        paddingTop:'4%',
         textAlign:'center'
     },
     buttonContainer:{
         alignItems:'center',
         justifyContent:'flex-end',
-        marginTop:'20%'
+        marginTop:'15%'
     },
     registerButton:{
         width:'48%',
