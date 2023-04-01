@@ -1,4 +1,4 @@
-import { useContext, useRef, useState }  from 'react'
+import { useContext, useEffect, useRef, useState }  from 'react'
 import { StyleSheet, Text, View, Dimensions, Switch } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -12,6 +12,7 @@ import CustomBtn from '../components/CustomBtn';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import themeContext from '../theme/themeContext';
 import theme from '../theme/theme';
+import * as Location from "expo-location";
 import ContactUs from './ContactUs';
 // import {GOOGLE_MAPS_KEY} from '@env'
 
@@ -67,13 +68,14 @@ const HomeFunction = ({navigation}) => {
   const theme = useContext(themeContext)
   const screen = Dimensions.get('window');
   const ASPECT_RATIO = screen.width / screen.height;
-  const LATITUDE_DELTA = 0.04;
+  const LATITUDE_DELTA =  0.00922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
+  //Current loc pin
   const [state, setState] = useState({
     originCords: {
-      latitude: 35.902705,
-      longitude:14.483579,
+      latitude: 36.04374749123692,
+      longitude: 14.237039973972584,
       latitudeDelta: 0.00922,
       longitudeDelta: 0.00421,
     },
@@ -107,6 +109,31 @@ const HomeFunction = ({navigation}) => {
     console. log("data=>>>>>", data)
 }
 
+useEffect(() => {
+  const getLocationAsync = async () => {
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status === 'granted') {
+      const location = await Location.getCurrentPositionAsync({});
+      setState({
+        originCords: {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        },
+        destinationCords: {
+          latitude: 35.89802,
+          longitude: 14.476714,
+          latitudeDelta: 0.00922,
+          longitudeDelta: 0.00421,
+        },
+      });
+    }
+  };
+  getLocationAsync();
+}, []);
+
+
   return (
     <View style={[styles.container, {backgroundColor:theme.backgroundColor}]}>
       <View style = {[styles.bottomCard, {backgroundColor:theme.backgroundColor}]}>
@@ -122,11 +149,18 @@ const HomeFunction = ({navigation}) => {
           ref={mapRef}
           userInterfaceStyle = {theme.userInterfaceStyle}
           style={StyleSheet.absoluteFill}
-          initialRegion={{
-            ...originCords, 
-            latitudeDelta:LATITUDE_DELTA,
-            longitudeDelta:LONGITUDE_DELTA
-          }}
+          region={originCords}
+          showsUserLocation={true}
+          onUserLocationChange={(e) => {
+            console.log("onUserLocationChange", e.nativeEvent.coordinate)
+
+            setState({
+              originCords:{
+                latitude: e.nativeEvent.coordinate.latitude,
+                longitude: e.nativeEvent.coordinate.longitude,
+            },
+          })
+        }}
           >
           <Marker
             coordinate={originCords}
