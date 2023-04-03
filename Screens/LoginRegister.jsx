@@ -136,8 +136,6 @@ const styles = StyleSheet.create({
         elevation: 3,
         backgroundColor: '#FFB703',
         marginBottom:'9%'
-        // borderColor:'#FFB703',
-        // borderWidth:'2'
     },
     registerText:{
         color:'#FFB703', 

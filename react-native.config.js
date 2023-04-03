@@ -1,6 +1,6 @@
-module.exports = {
-    project: {
-        expo:{}
-    },
-    assets:['./assets/fonts/'],
-}
+// module.exports = {
+//     project: {
+//         expo:{}
+//     },
+//     assets:['./assets/fonts/'],
+// }

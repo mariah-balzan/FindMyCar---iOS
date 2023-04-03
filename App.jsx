@@ -10,6 +10,7 @@ import { EventRegister } from 'react-native-event-listeners';
 import { React, useState, useEffect }  from 'react';
 import theme from './theme/theme'
 import themeContext from './theme/themeContext';
+import Address from './Screens/Address';
 
 //Create instance of StackNavigator
 const Stack = createNativeStackNavigator();
@@ -45,7 +46,7 @@ export default function App() {
         <NavigationContainer theme={darkMode === true ? DarkTheme : DefaultTheme}>
             {/* Removes the top title and expands screen area */}
           <Stack.Navigator screenOptions={{headerShown: false}}>
-            {/* <Stack.Screen
+            <Stack.Screen
             name = "Onboarding"
             component = {Onboarding}
             />
@@ -57,10 +58,14 @@ export default function App() {
             name = "Register"
             component = {SignupScreen}
             />
+             <Stack.Screen
+            name = "Address"
+            component = {Address}
+            />
             <Stack.Screen
             name = "Login"
             component = {LoginScreen}
-            /> */}
+            />
             <Stack.Screen
             name = "Home"
             component = {HomeScreen}

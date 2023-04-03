@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {View, Text, Button, StyleSheet, Image, Dimensions} from "react-native";
 import Onboarding from 'react-native-onboarding-swiper';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from "expo-font";
+import * as Font from 'expo-font';
+import * as SplashScreen from "expo-splash-screen"
 
 const { width } = Dimensions.get('screen');
 const { height } = Dimensions.get('screen');
@@ -23,12 +25,21 @@ const Next = ({...props}) => (
 );
 
 export default function OnBoarding ({navigation}){
-    let[fontsLoaded] = useFonts({
-        'Comfortaa' : require('../assets/fonts/Comfortaa/Comfortaa-VariableFont_wght.ttf'),
+    const [fontsLoaded] = useFonts({
+        "Comfortaa" : require('../assets/fonts/Comfortaa-VariableFont_wght.ttf'),
     })
 
+    useEffect(() => {
+        async function prepare() {
+            await SplashScreen.preventAutoHideAsync()
+        }
+        prepare()
+    },[])
+
 if(!fontsLoaded){
-    return <AppLoading/>
+    return undefined; 
+}else{
+    SplashScreen.hideAsync();
 }
 
     return(

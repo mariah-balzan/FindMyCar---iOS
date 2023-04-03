@@ -7,12 +7,13 @@ import 'firebase/compat/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyARMzEW-9RaJ0XCa3pJqDvMLAQtbth-A2Y",
-  authDomain: "fir-auth-483d7.firebaseapp.com",
-  projectId: "fir-auth-483d7",
-  storageBucket: "fir-auth-483d7.appspot.com",
-  messagingSenderId: "919135328174",
-  appId: "1:919135328174:web:0477feb6ba2dace2f45a3f"
+  apiKey: "AIzaSyAx5-3JtIgmedp4qRBwydjHwhQ43JDYfAA",
+  authDomain: "trackpal-dfe9d.firebaseapp.com",
+  projectId: "trackpal-dfe9d",
+  storageBucket: "trackpal-dfe9d.appspot.com",
+  messagingSenderId: "1002347108110",
+  appId: "1:1002347108110:web:98ba2769f7c4b90ee0e95f",
+  measurementId: "G-QE3C2YN4WK"
 };
 
 // Initialize Firebase
