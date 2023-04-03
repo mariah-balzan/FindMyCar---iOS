@@ -27,8 +27,9 @@ export default function LoginScreen ({navigation}){
       }
   
       return(
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : null}>
-    <ImageBackground source={require("../assets/loginRegister.png")} style={{width: width, height: height/2,resizeMode: 'stretch'}}>
+        <View style={{flex:1}}>
+        <View style={{flex:0.6}}>
+    <ImageBackground source={require("../assets/loginRegister.png")} style={styles.imageBackground}>
       <TouchableOpacity onPress={() => navigation.navigate("LoginRegister") }>
       <Image source={require("../assets/back-white.png")} style={styles.backIcon} />
         </TouchableOpacity>
@@ -38,7 +39,11 @@ export default function LoginScreen ({navigation}){
           <Text style= {styles.subtitle}>Sign into your account to continue</Text>
       </View>
     </ImageBackground>
-      <View style={styles.registerContainer}> 
+    </View>
+    <KeyboardAvoidingView 
+    behavior={Platform.OS === "ios" ? "padding" : null}  
+    style={styles.container}>      
+    <View style={styles.registerContainer}> 
             <View style = {styles.inputContainer}>
             <Text style= {styles.inputTitle}>Email address</Text>
               <TextInput
@@ -64,12 +69,13 @@ export default function LoginScreen ({navigation}){
               </TouchableOpacity>
     </View>
 </KeyboardAvoidingView>
+</View>
       )
   }
   
   const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 0.6,
         flexDirection:'column',
       },
       backIcon:{
@@ -86,6 +92,11 @@ export default function LoginScreen ({navigation}){
         padding:'6%',
         //marginTop:'25%'
       },
+        imageBackground: {
+          width: '100%', 
+          height: height*0.6,
+          resizeMode: 'stretch'
+        },
       title:{
         color:'#ffff', 
         fontSize:'43', 
@@ -101,11 +112,11 @@ export default function LoginScreen ({navigation}){
         textAlign:'left'
     },
     registerContainer:{
-      height:height/2,
-          backgroundColor:'#ffff',
-          flexDirection:'column',
-          alignItems:'center',
-          justifyContent:'space-evenly'
+      flex:1,
+    backgroundColor: '#ffff',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-evenly'
     },
       inputContainer: {
         backgroundColor: 'white',
