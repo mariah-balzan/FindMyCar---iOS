@@ -51,6 +51,8 @@ export default function LoginScreen ({navigation}){
                   value= {email}
                   onChangeText={text => setEmail(text)}
                   style={styles.input}
+                  autoCapitalize="none"
+                  autoCorrect={false}
               />
               <Text style= {styles.inputTitle}>Password</Text>
               <TextInput
@@ -58,7 +60,9 @@ export default function LoginScreen ({navigation}){
                   value= {password}
                   onChangeText={text => setPassword(text)}
                   style={styles.input}
-                  secureTextEntry
+                  secureTextEntry = {true}
+                  autoCapitalize="none"
+                  autoCorrect={false}
               />
            </View>
            

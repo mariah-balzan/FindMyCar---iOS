@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {View, Text, StyleSheet, KeyboardAvoidingView, TextInput, TouchableOpacity, ImageBackground, Dimensions, Image, ScrollView} from "react-native";
-import { auth } from "../firebase";
+import { auth,firestore} from "../firebase";
 
 const { width } = Dimensions.get('screen');
 const { height } = Dimensions.get('screen');
@@ -25,9 +25,18 @@ export default function SignupScreen ({navigation}){
     }, [])
 
     const handleSignUp = () => {
-      auth.createUserWithEmailAndPassword(email, password, {firstName,lastName}).then(userCredentials => {
+      auth.createUserWithEmailAndPassword(email, password).then(userCredentials => {
         const user = userCredentials.user
-        console.log('Registered with: ', user.email)
+          // Create a new user document in Firestore
+          firestore.collection("users").doc(user.uid).set({
+            firstName,
+            lastName,
+            age,
+            emergencyName,
+            emergencyNum,
+            address,
+          });
+        console.log('Registered with: ', user.email) 
       })
       .catch(error => alert(error.message))
     }
@@ -62,6 +71,8 @@ return (
           onChangeText={text => setEmail(text)}
           style={styles.input}
           keyboardType='email-address'
+          autoCapitalize="none"
+          autoCorrect={false}
         />
         <Text style={styles.inputTitle}>Password:</Text>
         <TextInput
@@ -70,6 +81,8 @@ return (
           onChangeText={text => setPassword(text)}
           style={styles.input}
           secureTextEntry
+          autoCapitalize="none"
+          autoCorrect={false}
         />
         <Text style={styles.subtitle}>Personal details</Text>
         <Text style={styles.inputTitle}>First Name:</Text>

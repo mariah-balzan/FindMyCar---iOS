@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
-const MapScreen = () => {
+export default function Address({navigation}){
   const [markerCoordinates, setMarkerCoordinates] = useState(null);
 
   const handleMapPress = (event) => {
@@ -73,4 +73,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MapScreen;
