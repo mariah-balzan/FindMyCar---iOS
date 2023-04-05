@@ -14,7 +14,7 @@ export default function SignupScreen ({navigation}){
   const [emergencyName, setEmergencyName] = useState('')
   const [emergencyNum, setEmergencyNum] = useState('')
   const [address, setAddress] = useState('')
-      
+  const [addressCoords, setAddressCoords] = useState('')    
     useEffect(() => {
       const unsubscribe = auth.onAuthStateChanged(user => {
         if(user){
@@ -29,12 +29,15 @@ export default function SignupScreen ({navigation}){
         const user = userCredentials.user
           // Create a new user document in Firestore
           firestore.collection("users").doc(user.uid).set({
+            email, 
+            password,
             firstName,
             lastName,
             age,
             emergencyName,
             emergencyNum,
             address,
+            addressCoords
           });
         console.log('Registered with: ', user.email) 
       })

@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
       fontSize: 20,
       margin: 30,
       color: '#989898',
+      fontFamily:'Comfortaa'
     },
      button: {
       backgroundColor: '#0782F9',
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         marginBottom: 40,
-        marginTop: 40,
+        marginTop: '11%',
       },
     buttonText: {
       color: 'white',
@@ -145,10 +146,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
       },
       profileEmail: {
-        marginTop: 20,
+        marginTop: '11%',
         fontSize: 16,
         color: '#989898',
         textAlign: 'center',
+        fontFamily:'Comfortaa'
       },
       row: {
         flexDirection: 'row',
