@@ -1,10 +1,12 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import CustomBtn from '../components/CustomBtn';
+import { showError, showSuccess } from '../helper/helperFunction';
 
-export default function Address({navigation}){
-
+export default function Address(props){
+  const navigation = useNavigation();
   const screen = Dimensions.get('window');
   const ASPECT_RATIO = screen.width / screen.height;
   const LATITUDE_DELTA =  0.00922;
@@ -17,39 +19,17 @@ export default function Address({navigation}){
       longitude: 14.237039973972584,
       latitudeDelta: 0.00922,
       longitudeDelta: 0.00421,
-    },
-    addressCords: {
-      latitude: 35.898020,
-      longitude:14.476714,
-      latitudeDelta: 0.00922,
-      longitudeDelta: 0.00421,
     }
   })
-  const { originCords, addressCords } = state
+  const { originCords } = state
 
   const mapRef = useRef()
 
-  const onPressLocation = () => {
-    navigation.navigate("chooseLocation", {getCoordinates:fetchValues})
-  }
-
-  const fetchValues = (data) => {
-    setState({
-      originCords:{
-        latitude: data.originCords.latitude,
-        longitude: data.originCords.longitude,
-      },
-      addressCords:{
-        latitude: data.addressCords.latitude,
-        longitude: data.addressCords.longitude,
-      }
-    })
-    console. log("data=>>>>>", data)
-}
-
+//current location:
 useEffect(() => {
   const getLocationAsync = async () => {
-    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    // const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === 'granted') {
       const location = await Location.getCurrentPositionAsync({});
       setState({
@@ -67,17 +47,39 @@ useEffect(() => {
 
 
 //Obtain pin coordinates
-  const [markerCoordinates, setMarkerCoordinates] = useState(null);
-
+  const [markerCoordinates, setMarkerCoordinates] = useState('');
   const handleMapPress = (event) => {
     setMarkerCoordinates(event.nativeEvent.coordinate);
   };
 
+ //Check home pin is entered
+ const checkValid = () =>{
+  if(Object.keys(markerCoordinates).length === 0){
+    showError('Please enter location')
+    return false
+  }
+  return true
+}
+
+const navigateToSignup = () => {
+  props.navigation.navigate('Register', { markerCoordinates });
+};
+
   const handleSavePress = () => {
     // Here you can convert the coordinates to an address using a geocoding API
     // and save it to your database or state
+    const isValid = checkValid()
+    console.log("is valid?", isValid)
     console.log(markerCoordinates);
-  };
+    if(isValid){
+      // props.route.params.getCoordinates({
+      //   markerCoordinates
+      navigateToSignup();
+      }
+      showSuccess("Valid locations inputted")
+      //navigation.goBack()
+    }
+  //};
 
   return (
     <View style={[styles.container]}>
@@ -86,7 +88,7 @@ useEffect(() => {
             <CustomBtn
             btnText = "Choose your location"
             btnStyle = {{width:'80%', marginBottom:'-3%'}}
-            onPress = {onPressLocation}
+            onPress = {handleSavePress}
       />
           </View>
       <View style ={[{flex:1}]}>
@@ -115,13 +117,6 @@ useEffect(() => {
           />
         )}
           </MapView>
-          {markerCoordinates && (
-        <View style={styles.saveButtonContainer}>
-          <TouchableOpacity onPress={handleSavePress} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save Address</Text>
-          </TouchableOpacity>
-        </View>
-      )}
           </View>
     </View>
   );

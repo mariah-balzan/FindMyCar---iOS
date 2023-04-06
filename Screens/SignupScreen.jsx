@@ -4,7 +4,7 @@ import { auth,firestore} from "../firebase";
 
 const { width } = Dimensions.get('screen');
 const { height } = Dimensions.get('screen');
-export default function SignupScreen ({navigation}){
+export default function SignupScreen ({navigation, route}){
   
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -14,8 +14,9 @@ export default function SignupScreen ({navigation}){
   const [emergencyName, setEmergencyName] = useState('')
   const [emergencyNum, setEmergencyNum] = useState('')
   const [address, setAddress] = useState('')
-  const [addressCoords, setAddressCoords] = useState('')    
-    useEffect(() => {
+  const markerCoordinates = route.params?.markerCoordinates;
+
+  useEffect(() => {
       const unsubscribe = auth.onAuthStateChanged(user => {
         if(user){
           navigation.replace("Home")
@@ -23,6 +24,12 @@ export default function SignupScreen ({navigation}){
       })
       return unsubscribe
     }, [])
+
+    //Get coords
+    const onPressLocation = () => {
+      // navigation.navigate("Address", {getCoordinates:fetchValues})
+      navigation.navigate("Address")
+    }
 
     const handleSignUp = () => {
       auth.createUserWithEmailAndPassword(email, password).then(userCredentials => {
@@ -36,8 +43,10 @@ export default function SignupScreen ({navigation}){
             age,
             emergencyName,
             emergencyNum,
-            address,
-            addressCoords
+            markerCoordinates: markerCoordinates ? {
+              latitude: markerCoordinates.latitude,
+              longitude: markerCoordinates.longitude
+            } : null
           });
         console.log('Registered with: ', user.email) 
       })
@@ -152,7 +161,7 @@ return (
         <View style={{flexDirection:'row', marginEnd:'10%'}}>
         <TextInput
           placeholder='Address'
-          value={address}
+          value={markerCoordinates ? `\nLat: ${markerCoordinates.latitude}, Lng: ${markerCoordinates.longitude}` : ''}
           onChangeText={text => setAddress(text)}
           style={{
           fontFamily:'Comfortaa', 
@@ -166,7 +175,7 @@ return (
           marginTop: '2%',
           margin:'7%'}}
         />
-        <TouchableOpacity onPress={() => navigation.navigate("Address") }>
+        <TouchableOpacity onPress={onPressLocation}>
           <Image source={require("../assets/maps.png")} style={styles.mapIcon}/>
         </TouchableOpacity>
         </View>

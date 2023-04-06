@@ -37,7 +37,7 @@ const onDone = () => {
   const isValid = checkValid()
   console.log("is valid?", isValid)
   if(isValid){
-    props.route.params.getCoordinates({
+    props.getCoordinates({
       originCords,
       destinationCords
     })
