@@ -46,14 +46,14 @@ export default function App() {
         <NavigationContainer theme={darkMode === true ? DarkTheme : DefaultTheme}>
             {/* Removes the top title and expands screen area */}
           <Stack.Navigator screenOptions={{headerShown: false}}>
-            <Stack.Screen
+            {/* <Stack.Screen
             name = "Onboarding"
             component = {Onboarding}
             />
             <Stack.Screen
             name = "LoginRegister"
             component = {LoginRegister}
-            />
+            /> */}
             <Stack.Screen
             name = "Register"
             component = {SignupScreen}

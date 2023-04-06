@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { View, StyleSheet, Text, TouchableOpacity, Dimensions, TextInput, KeyboardAvoidingView } from 'react-native';
+import MapView, { Circle, Marker } from 'react-native-maps';
 import CustomBtn from '../components/CustomBtn';
 import { showError, showSuccess } from '../helper/helperFunction';
 
@@ -11,7 +11,7 @@ export default function Address(props){
   const ASPECT_RATIO = screen.width / screen.height;
   const LATITUDE_DELTA =  0.00922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-
+  
   //Current loc pin
   const [state, setState] = useState({
     originCords: {
@@ -28,7 +28,6 @@ export default function Address(props){
 //current location:
 useEffect(() => {
   const getLocationAsync = async () => {
-    // const { status } = await Permissions.askAsync(Permissions.LOCATION);
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === 'granted') {
       const location = await Location.getCurrentPositionAsync({});
@@ -48,6 +47,7 @@ useEffect(() => {
 
 //Obtain pin coordinates
   const [markerCoordinates, setMarkerCoordinates] = useState('');
+  const [area, setArea] = useState('')
   const handleMapPress = (event) => {
     setMarkerCoordinates(event.nativeEvent.coordinate);
   };
@@ -62,32 +62,35 @@ useEffect(() => {
 }
 
 const navigateToSignup = () => {
-  props.navigation.navigate('Register', { markerCoordinates });
+  props.navigation.navigate('Register', { markerCoordinates , area});
 };
 
   const handleSavePress = () => {
-    // Here you can convert the coordinates to an address using a geocoding API
-    // and save it to your database or state
     const isValid = checkValid()
     console.log("is valid?", isValid)
     console.log(markerCoordinates);
     if(isValid){
-      // props.route.params.getCoordinates({
-      //   markerCoordinates
       navigateToSignup();
       }
       showSuccess("Valid locations inputted")
-      //navigation.goBack()
     }
-  //};
 
   return (
     <View style={[styles.container]}>
       <View style = {[styles.bottomCard]}>
-            <Text style = {[styles.header]}>Want to find your car?</Text>
+            <Text style = {[styles.header]}>Locate your home</Text>
+            <Text style = {[styles.subtitle]}>Pin your home and add a safety geofence</Text>
+            <Text style={styles.inputTitle}>Geofence area :</Text>
+              <TextInput
+                placeholder='Area'
+                value={area}
+                onChangeText={text => setArea(text)}
+                style={styles.input}
+                keyboardType='number-pad'
+              />
             <CustomBtn
-            btnText = "Choose your location"
-            btnStyle = {{width:'80%', marginBottom:'-3%'}}
+            btnText = "Save Address"
+            btnStyle = {{width:'45%', marginBottom:'-3%'}}
             onPress = {handleSavePress}
       />
           </View>
@@ -110,12 +113,20 @@ const navigateToSignup = () => {
         }}
           >
           {markerCoordinates && (
-          <Marker
-            coordinate={markerCoordinates}
-            draggable
-            onDragEnd={(event) => setMarkerCoordinates(event.nativeEvent.coordinate)}
-          />
-        )}
+            <>
+              <Marker
+                coordinate={markerCoordinates}
+                draggable
+                onDragEnd={(event) => setMarkerCoordinates(event.nativeEvent.coordinate)}
+              />
+              <Circle
+                center={markerCoordinates} 
+                radius={area} 
+                fillColor='rgba(255, 0, 0, 0.1)'
+                strokeColor='rgba(255, 0, 0, 0.5)'
+              />
+            </>
+          )}
           </MapView>
           </View>
     </View>
@@ -129,7 +140,7 @@ const styles = StyleSheet.create({
   bottomCard:{
     backgroundColor: 'white',
     width: '100%',
-    padding: 30,
+    paddingVertical: '10%',
     borderRadius:30,
     paddingTop:'13%',
     alignItems:'center'
@@ -137,8 +148,15 @@ const styles = StyleSheet.create({
   header: {
     marginBottom:'5%', 
     marginTop:'3%', 
-    color:'#FFB703', 
+    color:'#023047', 
     fontSize:'24', 
+    fontFamily:'Comfortaa'
+  },
+  subtitle:{
+    marginBottom:'5%', 
+    marginTop:'3%', 
+    color:'#023047', 
+    fontSize:'20', 
     fontFamily:'Comfortaa'
   },
   saveButtonContainer: {
@@ -155,5 +173,17 @@ const styles = StyleSheet.create({
       saveButtonText: {
         color: 'white',
         fontWeight: 'bold',
+      },
+      input: {
+        fontFamily:'Comfortaa', 
+        backgroundColor: 'white',
+        width:'80%',
+        borderColor:'#023047',
+        borderWidth:'1%',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 10,
+        marginTop: '2%',
+        margin:'7%',
       },
 })

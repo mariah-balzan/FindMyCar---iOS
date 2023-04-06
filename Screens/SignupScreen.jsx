@@ -15,6 +15,8 @@ export default function SignupScreen ({navigation, route}){
   const [emergencyNum, setEmergencyNum] = useState('')
   const [address, setAddress] = useState('')
   const markerCoordinates = route.params?.markerCoordinates;
+  const [geofence, setGeofence] = useState('')
+  const area = route.params?.area;
 
   useEffect(() => {
       const unsubscribe = auth.onAuthStateChanged(user => {
@@ -27,7 +29,6 @@ export default function SignupScreen ({navigation, route}){
 
     //Get coords
     const onPressLocation = () => {
-      // navigation.navigate("Address", {getCoordinates:fetchValues})
       navigation.navigate("Address")
     }
 
@@ -43,6 +44,7 @@ export default function SignupScreen ({navigation, route}){
             age,
             emergencyName,
             emergencyNum,
+            area: area,
             markerCoordinates: markerCoordinates ? {
               latitude: markerCoordinates.latitude,
               longitude: markerCoordinates.longitude
@@ -179,6 +181,14 @@ return (
           <Image source={require("../assets/maps.png")} style={styles.mapIcon}/>
         </TouchableOpacity>
         </View>
+        <Text style={styles.inputTitle}>Geofence Area:</Text>
+        <TextInput
+          placeholder='Area'
+          value={area ? area.toString() : ''}
+          onChangeText={text => setGeofence(text)}
+          style={styles.input}
+          keyboardType='number-pad'
+        />
       </View>
       
       <TouchableOpacity   
@@ -187,7 +197,6 @@ return (
       >
         <Text style={styles.buttonOutlineText}>Register</Text>
       </TouchableOpacity>
-      
     </View>
     </ScrollView>
   </KeyboardAvoidingView>
