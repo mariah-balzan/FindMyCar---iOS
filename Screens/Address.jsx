@@ -1,6 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
+import { setLogLevel } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Dimensions, TextInput, KeyboardAvoidingView } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import MapView, { Circle, Marker } from 'react-native-maps';
 import CustomBtn from '../components/CustomBtn';
 import { showError, showSuccess } from '../helper/helperFunction';
@@ -46,20 +48,30 @@ useEffect(() => {
 
 
 //Obtain pin coordinates
-  const [markerCoordinates, setMarkerCoordinates] = useState('');
+  const [markerCoordinates, setMarkerCoordinates] = useState({});
   const [area, setArea] = useState('')
   const handleMapPress = (event) => {
     setMarkerCoordinates(event.nativeEvent.coordinate);
   };
 
  //Check home pin is entered
- const checkValid = () =>{
-  if(Object.keys(markerCoordinates).length === 0){
-    showError('Please enter location')
-    return false
+const checkValid = () => {
+  if (Object.keys(markerCoordinates).length === 0) {
+    showError('Please enter Home Address');
+    return false;
   }
-  return true
+  return true;
 }
+
+ //Check geofence area is entered
+ const checkValidGeo = () => {
+  if (Object.keys(area).length === 0) {
+    showError('Please enter geofence area');
+    return false;
+  }
+  return true;
+}
+
 
 const navigateToSignup = () => {
   props.navigation.navigate('Register', { markerCoordinates , area});
@@ -67,20 +79,29 @@ const navigateToSignup = () => {
 
   const handleSavePress = () => {
     const isValid = checkValid()
+    const geoValid = checkValidGeo()
     console.log("is valid?", isValid)
+    console.log("is geo valid?", geoValid)
     console.log(markerCoordinates);
-    if(isValid){
-      navigateToSignup();
-      }
+    console.log(Object.keys(markerCoordinates))
+    if(isValid && geoValid){
       showSuccess("Valid locations inputted")
+      navigateToSignup();
+      }else{
+        showError("Please enter details")
+      }
+      
     }
 
   return (
     <View style={[styles.container]}>
-      <View style = {[styles.bottomCard]}>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : null}  
+        style={styles.bottomCard}>
+      {/* <View style = {[styles.bottomCard]}> */}
             <Text style = {[styles.header]}>Locate your home</Text>
             <Text style = {[styles.subtitle]}>Pin your home and add a safety geofence</Text>
-            <Text style={styles.inputTitle}>Geofence area :</Text>
+            <Text style={styles.inputTitle}>Geofence area:</Text>
               <TextInput
                 placeholder='Area'
                 value={area}
@@ -93,8 +114,9 @@ const navigateToSignup = () => {
             btnStyle = {{width:'45%', marginBottom:'-3%'}}
             onPress = {handleSavePress}
       />
-          </View>
-      <View style ={[{flex:1}]}>
+          {/* </View> */}
+          </KeyboardAvoidingView>
+      <View style ={{flex:0.7}}>
       <MapView
           ref={mapRef}
           style={StyleSheet.absoluteFill}
@@ -136,12 +158,14 @@ const navigateToSignup = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection:'column',
+   justifyContent:'center',
   },
   bottomCard:{
+    flex:0.3,
     backgroundColor: 'white',
     width: '100%',
-    paddingVertical: '10%',
-    borderRadius:30,
+    borderRadius:3,
     paddingTop:'13%',
     alignItems:'center'
   },

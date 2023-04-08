@@ -53,6 +53,7 @@ export default function LoginScreen ({navigation}){
                   style={styles.input}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  keyboardType={"email-address"}
               />
               <Text style= {styles.inputTitle}>Password</Text>
               <TextInput

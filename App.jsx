@@ -11,6 +11,7 @@ import { React, useState, useEffect }  from 'react';
 import theme from './theme/theme'
 import themeContext from './theme/themeContext';
 import Address from './Screens/Address';
+import FlashMessage from 'react-native-flash-message';
 
 //Create instance of StackNavigator
 const Stack = createNativeStackNavigator();
@@ -46,14 +47,14 @@ export default function App() {
         <NavigationContainer theme={darkMode === true ? DarkTheme : DefaultTheme}>
             {/* Removes the top title and expands screen area */}
           <Stack.Navigator screenOptions={{headerShown: false}}>
-            {/* <Stack.Screen
+            <Stack.Screen
             name = "Onboarding"
             component = {Onboarding}
             />
             <Stack.Screen
             name = "LoginRegister"
             component = {LoginRegister}
-            /> */}
+            />
             <Stack.Screen
             name = "Register"
             component = {SignupScreen}
@@ -70,7 +71,11 @@ export default function App() {
             name = "Home"
             component = {HomeScreen}
             />
+            
           </Stack.Navigator>
+          <FlashMessage
+            position='top'
+            />
         </NavigationContainer>
       </themeContext.Provider>
       
