@@ -1,8 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
-import { setLogLevel } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Dimensions, TextInput, KeyboardAvoidingView } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
 import MapView, { Circle, Marker } from 'react-native-maps';
 import CustomBtn from '../components/CustomBtn';
 import { showError, showSuccess } from '../helper/helperFunction';

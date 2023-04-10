@@ -6,7 +6,7 @@ import ProfileScreen from './ProfileScreen';
 import SettingsScreen from './SettingsScreen';
 import FlashMessage from 'react-native-flash-message';
 import ChooseLocation from './ChooseLocation';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Circle, Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import CustomBtn from '../components/CustomBtn';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -14,6 +14,7 @@ import themeContext from '../theme/themeContext';
 import theme from '../theme/theme';
 import * as Location from "expo-location";
 import ContactUs from './ContactUs';
+import { auth, firestore } from '../firebase';
 // import {GOOGLE_MAPS_KEY} from '@env'
 
 const Tab = createBottomTabNavigator();
@@ -68,7 +69,7 @@ const HomeFunction = ({navigation}) => {
   const theme = useContext(themeContext)
   const screen = Dimensions.get('window');
   const ASPECT_RATIO = screen.width / screen.height;
-  const LATITUDE_DELTA =  0.00922;
+  const LATITUDE_DELTA =  0.005;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
   //Current loc pin
@@ -76,18 +77,18 @@ const HomeFunction = ({navigation}) => {
     originCords: {
       latitude: 36.04374749123692,
       longitude: 14.237039973972584,
-      latitudeDelta: 0.00922,
-      longitudeDelta: 0.00421,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.003,
     },
-    destinationCords: {
-      latitude: 35.898020,
-      longitude:14.476714,
-        latitudeDelta: 0.00922,
-        longitudeDelta: 0.00421,
-    }
+    // destinationCords: {
+    //   latitude: 35.898020,
+    //   longitude:14.476714,
+    //     latitudeDelta: 0.00922,
+    //     longitudeDelta: 0.00421,
+    // }
   })
-  const { originCords, destinationCords } = state
-
+  // const { originCords, destinationCords } = state
+  const { originCords } = state
   const mapRef = useRef()
   const carImage = require('../assets/car.png')
 
@@ -101,10 +102,10 @@ const HomeFunction = ({navigation}) => {
         latitude: data.originCords.latitude,
         longitude: data.originCords.longitude,
       },
-      destinationCords:{
-        latitude: data.destinationCords.latitude,
-        longitude: data.destinationCords.longitude,
-      }
+      // destinationCords:{
+      //   latitude: data.destinationCords.latitude,
+      //   longitude: data.destinationCords.longitude,
+      // }
     })
     console. log("data=>>>>>", data)
 }
@@ -121,18 +122,34 @@ useEffect(() => {
           latitudeDelta: LATITUDE_DELTA,
           longitudeDelta: LONGITUDE_DELTA,
         },
-        destinationCords: {
-          latitude: 35.89802,
-          longitude: 14.476714,
-          latitudeDelta: 0.00922,
-          longitudeDelta: 0.00421,
-        },
+        // destinationCords: {
+        //   latitude: 35.89802,
+        //   longitude: 14.476714,
+        //   latitudeDelta: 0.00922,
+        //   longitudeDelta: 0.00421,
+        // },
       });
     }
   };
   getLocationAsync();
 }, []);
+const [markerCoordinates, setMarkerCoordinates] = useState(null);
+  const [area, setArea] = useState(null);
 
+  useEffect(() => {
+    const fetchMapData = async () => {
+      try {
+        const user = auth.currentUser;
+        const userDoc = await firestore.collection("users").doc(user.uid).get();
+        const userData = userDoc.data();
+        setMarkerCoordinates(userData.markerCoordinates);
+        setArea(userData.area);
+      } catch (error) {
+        console.error("Error fetching map data:", error);
+      }
+    };
+    fetchMapData();
+  }, []);
 
   return (
     <View style={[styles.container, {backgroundColor:theme.backgroundColor}]}>
@@ -162,16 +179,29 @@ useEffect(() => {
           })
         }}
           >
-          <Marker
-            coordinate={originCords}
-          />
-          <Marker
+          {/* <Marker
+            coordinate={markerCoordinates}
+          /> */}
+           {markerCoordinates && (
+            <>
+              <Marker
+                coordinate={markerCoordinates}
+              />
+              <Circle
+                center={markerCoordinates} 
+                radius={area} 
+                fillColor='rgba(255, 0, 0, 0.1)'
+                strokeColor='rgba(255, 0, 0, 0.5)'
+              />
+            </>
+          )}
+          {/* <Marker
           coordinate={destinationCords} 
-          image={carImage}/>
+          image={carImage}/> */}
 
           {/* <MapViewDirections
             origin = {originCords}
-            destination={destinationCords}
+            destination={markerCoordinates}
             apikey = {GOOGLE_MAPS_KEY}
             strokeWidth={3}
             strokeColor="#FFB703"
@@ -188,7 +218,6 @@ useEffect(() => {
           })
         }} 
             /> */}
-           
           </MapView>
           </View>
     </View>
