@@ -159,10 +159,12 @@ useEffect(() => {
   const [isInsideGeofence, setIsInsideGeofence] = useState(false);
   const [wasInsideGeofence, setWasInsideGeofence] = useState(false);
   const [alertDisplayed, setAlertDisplayed] = useState(false);
+  const [geofenceEnabled, setGeofenceEnabled] = useState(true);
+
 
   useEffect(( ) => {
     const checkIfOutsideGeofence = () => {
-      if (originCords && markerCoordinates) {
+      if (originCords && markerCoordinates && geofenceEnabled) {
         const distance = getDistance(
           [originCords.latitude, originCords.longitude],
           [markerCoordinates.latitude, markerCoordinates.longitude],
@@ -198,6 +200,10 @@ useEffect(() => {
     checkIfOutsideGeofence();
   }, [originCords, markerCoordinates, area, isInsideGeofence, wasInsideGeofence,alertDisplayed]);
   
+  const toggleGeofence = (value) => {
+    setGeofenceEnabled(value);
+    console.log("Switch", value)
+  };
 
   // useEffect(() => {
   //   const checkIfOutsideGeofence = () => {
@@ -230,6 +236,13 @@ useEffect(() => {
             btnText = "Choose your location"
             btnStyle = {{width:'80%', marginBottom:'-3%'}}
             onPress = {onPressLocation}
+      />
+      <Switch
+        value={geofenceEnabled}
+        onValueChange={toggleGeofence}
+        trackColor={{ false: '#767577', true: '#81b0ff' }}
+        thumbColor={geofenceEnabled ? '#f5dd4b' : '#f4f3f4'}
+        ios_backgroundColor="#3e3e3e"
       />
           </View>
       <View style ={[{flex:1}, {backgroundColor:theme.backgroundColor}]}>
