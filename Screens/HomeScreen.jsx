@@ -15,7 +15,7 @@ import theme from '../theme/theme';
 import * as Location from "expo-location";
 import ContactUs from './ContactUs';
 import { auth, firestore } from '../firebase';
-import geolib, { getDistance } from 'geolib';
+import  { getDistance } from 'geolib';
 // import {GOOGLE_MAPS_KEY} from '@env'
 
 const Tab = createBottomTabNavigator();
@@ -164,34 +164,39 @@ useEffect(() => {
     const checkIfOutsideGeofence = () => {
       if (originCords && markerCoordinates) {
         const distance = getDistance(
-          [originCords.latitude,originCords.longitude],
-          [markerCoordinates.latitude,markerCoordinates.longitude]
+          [originCords.latitude, originCords.longitude],
+          [markerCoordinates.latitude, markerCoordinates.longitude],
         );
-        // console.log(
-        //   [originCords.latitude,
-        //   originCords.longitude],
-        //   [markerCoordinates.latitude,
-        //   markerCoordinates.longitude]
-        //   )
-        console.log(distance)
-        if (distance > area && !alertDisplayed) {
-          Alert.alert("Alert", "You are outside the geofence area!");
-          setIsInsideGeofence(false);
-          setAlertDisplayed(true);
-          console.log("outside")
-        } else if (distance <= area && !isInsideGeofence && !alertDisplayed) {
-          // Alert.alert("Alert", "You are inside the geofence area!");
+    
+        console.log('Distance:', distance);
+        console.log('Area:', area);
+    
+        const isInside = distance <= area;
+    
+        if (isInside && !wasInsideGeofence) {
           setIsInsideGeofence(true);
+          setWasInsideGeofence(true);
+          setAlertDisplayed(false);
+          console.log('Inside geofence');
+          Alert.alert("Alert", "You are inside the geofence area!");
+
+        } else if (!isInside && wasInsideGeofence) {
+          setIsInsideGeofence(false);
+          setWasInsideGeofence(false);
+          setAlertDisplayed(false);
+          console.log('Outside geofence');
+
+        } else if (!isInside && !wasInsideGeofence && !alertDisplayed) {
           setAlertDisplayed(true);
-          console.log("inside")
+          console.log('Outside geofence');
+          Alert.alert("Alert", "You are outside the geofence area!");
+        }else {
+          console.log('Still', wasInsideGeofence ? 'Inside' : 'Outside', 'geofence');
         }
       }
-    };
+    };    
     checkIfOutsideGeofence();
-    // if (isInsideGeofence !== prevIsInsideGeofence) {
-    //   setPrevIsInsideGeofence(isInsideGeofence);
-    // }
-  }, [originCords, markerCoordinates, area, isInsideGeofence, alertDisplayed]);
+  }, [originCords, markerCoordinates, area, isInsideGeofence, wasInsideGeofence,alertDisplayed]);
   
 
   // useEffect(() => {

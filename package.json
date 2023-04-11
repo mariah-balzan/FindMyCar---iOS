@@ -28,6 +28,7 @@
     "geolib": "^3.3.3",
     "react": "18.1.0",
     "react-native": "0.70.8",
+    "react-native-awesome-alerts": "^2.0.0",
     "react-native-dotenv": "^3.4.7",
     "react-native-event-listeners": "^1.0.7",
     "react-native-flash-message": "^0.4.0",
