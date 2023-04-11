@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState }  from 'react'
-import { StyleSheet, Text, View, Dimensions, Switch } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, Switch, Alert } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProfileScreen from './ProfileScreen';
@@ -15,6 +15,7 @@ import theme from '../theme/theme';
 import * as Location from "expo-location";
 import ContactUs from './ContactUs';
 import { auth, firestore } from '../firebase';
+import geolib, { getDistance } from 'geolib';
 // import {GOOGLE_MAPS_KEY} from '@env'
 
 const Tab = createBottomTabNavigator();
@@ -72,13 +73,17 @@ const HomeFunction = ({navigation}) => {
   const LATITUDE_DELTA =  0.005;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
+  //Retrieve marker and geo area from firestore:
+  const [markerCoordinates, setMarkerCoordinates] = useState(null);
+  const [area, setArea] = useState(null);
+  
   //Current loc pin
   const [state, setState] = useState({
     originCords: {
       latitude: 36.04374749123692,
       longitude: 14.237039973972584,
-      latitudeDelta: 0.005,
-      longitudeDelta: 0.003,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA,
     },
     // destinationCords: {
     //   latitude: 35.898020,
@@ -133,8 +138,6 @@ useEffect(() => {
   };
   getLocationAsync();
 }, []);
-const [markerCoordinates, setMarkerCoordinates] = useState(null);
-  const [area, setArea] = useState(null);
 
   useEffect(() => {
     const fetchMapData = async () => {
@@ -150,6 +153,69 @@ const [markerCoordinates, setMarkerCoordinates] = useState(null);
     };
     fetchMapData();
   }, []);
+
+
+  //Geofence:
+  const [isInsideGeofence, setIsInsideGeofence] = useState(false);
+  const [wasInsideGeofence, setWasInsideGeofence] = useState(false);
+  const [alertDisplayed, setAlertDisplayed] = useState(false);
+
+  useEffect(( ) => {
+    const checkIfOutsideGeofence = () => {
+      if (originCords && markerCoordinates) {
+        const distance = getDistance(
+          [originCords.latitude,originCords.longitude],
+          [markerCoordinates.latitude,markerCoordinates.longitude]
+        );
+        // console.log(
+        //   [originCords.latitude,
+        //   originCords.longitude],
+        //   [markerCoordinates.latitude,
+        //   markerCoordinates.longitude]
+        //   )
+        console.log(distance)
+        if (distance > area && !alertDisplayed) {
+          Alert.alert("Alert", "You are outside the geofence area!");
+          setIsInsideGeofence(false);
+          setAlertDisplayed(true);
+          console.log("outside")
+        } else if (distance <= area && !isInsideGeofence && !alertDisplayed) {
+          // Alert.alert("Alert", "You are inside the geofence area!");
+          setIsInsideGeofence(true);
+          setAlertDisplayed(true);
+          console.log("inside")
+        }
+      }
+    };
+    checkIfOutsideGeofence();
+    // if (isInsideGeofence !== prevIsInsideGeofence) {
+    //   setPrevIsInsideGeofence(isInsideGeofence);
+    // }
+  }, [originCords, markerCoordinates, area, isInsideGeofence, alertDisplayed]);
+  
+
+  // useEffect(() => {
+  //   const checkIfOutsideGeofence = () => {
+  //     if (markerCoordinates && area) {
+  //       const distance = getDistance(
+  //         originCords.latitude,
+  //         originCords.longitude,
+  //         markerCoordinates.latitude,
+  //         markerCoordinates.longitude
+  //       );
+  //       if (distance > area && isInsideGeofence) {
+  //         Alert.alert("Alert", "You are outside the geofence area!");
+  //         setIsInsideGeofence(false);
+  //         console.log("outside of geofence")
+  //       }else if(distance <= area && !isInsideGeofence) {
+  //         Alert.alert("Alert", "You are inside the geofence area!");
+  //         setIsInsideGeofence(true);
+  //         console.log("inside of geofence")
+  //       }
+  //     }
+  //   };
+  //   checkIfOutsideGeofence();
+  // }, [originCords, markerCoordinates, area]);
 
   return (
     <View style={[styles.container, {backgroundColor:theme.backgroundColor}]}>
@@ -175,6 +241,8 @@ const [markerCoordinates, setMarkerCoordinates] = useState(null);
               originCords:{
                 latitude: e.nativeEvent.coordinate.latitude,
                 longitude: e.nativeEvent.coordinate.longitude,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
             },
           })
         }}
@@ -214,7 +282,6 @@ const [markerCoordinates, setMarkerCoordinates] = useState(null);
                 left: 30,
                 top: 100    
                 }
-               // animated:true
           })
         }} 
             /> */}
