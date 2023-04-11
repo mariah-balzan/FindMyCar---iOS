@@ -6,10 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "permissions": [
-      "ACCESS_FINE_LOCATION",
-      "ACCESS_BACKGROUND_LOCATION"
-    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
