@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     flex:0.3,
     backgroundColor: 'white',
     width: '100%',
-    borderRadius:3,
+    borderRadius:30,
     paddingTop:'13%',
     alignItems:'center'
   },

@@ -47,8 +47,6 @@ export default function SettingsScreen({ navigation }) {
     return (
         <SafeAreaView style={[{ flex: 1 }, {backgroundColor:theme.backgroundColor}]}>
           <ScrollView contentContainerStyle={[styles.container, {backgroundColor:theme.backgroundColor}]}>
-            
-    
             {SECTIONS.map(({ header, items }) => (
               <View style={[styles.section, {backgroundColor:theme.backgroundColor}]} key={header}>
                 <Text style={[styles.sectionHeader, {color:theme.color}]}>{header}</Text>
