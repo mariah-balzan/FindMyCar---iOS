@@ -145,7 +145,7 @@ const HomeFunction = ({ navigation }) => {
 
   useEffect(() => {
     const getLocationAsync = async () => {
-      const { status } = await Permissions.requestForegroundPermissionsAsync(Permissions.LOCATION_FOREGROUND)
+      const { status } = await Location.requestForegroundPermissionsAsync()
       if (status === "granted") {
         const location = await Location.getCurrentPositionAsync({});
         setState({
@@ -294,7 +294,7 @@ const HomeFunction = ({ navigation }) => {
 
   const centerMap = async () => {
     try {
-      const { status } = await Permissions.requestForegroundPermissionsAsync(Permissions.LOCATION_FOREGROUND);
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Location permission not granted");
         return;
@@ -308,6 +308,13 @@ const HomeFunction = ({ navigation }) => {
           longitudeDelta: LONGITUDE_DELTA,
         }
       });
+      mapRef.current.animateToRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      });
+      console.log(originCords)
     } catch (error) {
       console.log("Error getting location:", error);
     }
@@ -360,7 +367,7 @@ const HomeFunction = ({ navigation }) => {
             });
           }}
         >
-          <TouchableOpacity style={{alignItems:'flex-end'}} onPress={centerMap}>
+          <TouchableOpacity style={{alignItems:'flex-end'}} onPress={()=> centerMap()}>
           <Image
           style={{width:50, height:50, marginEnd:'3%', marginTop:'3%'}}source= {require("../assets/recentre.png")} 
         />
