@@ -240,58 +240,6 @@ const HomeFunction = ({ navigation }) => {
     console.log("Switch", value);
   };
 
-  // useEffect(() => {
-  //   const checkIfOutsideGeofence = () => {
-  //     if (markerCoordinates && area) {
-  //       const distance = getDistance(
-  //         originCords.latitude,
-  //         originCords.longitude,
-  //         markerCoordinates.latitude,
-  //         markerCoordinates.longitude
-  //       );
-  //       if (distance > area && isInsideGeofence) {
-  //         Alert.alert("Alert", "You are outside the geofence area!");
-  //         setIsInsideGeofence(false);
-  //         console.log("outside of geofence")
-  //       }else if(distance <= area && !isInsideGeofence) {
-  //         Alert.alert("Alert", "You are inside the geofence area!");
-  //         setIsInsideGeofence(true);
-  //         console.log("inside of geofence")
-  //       }
-  //     }
-  //   };
-  //   checkIfOutsideGeofence();
-  // }, [originCords, markerCoordinates, area]);
-
-  // const centerMap = async () => {
-  //   try {
-  //     const { status } = await Permissions.askAsync(Permissions.LOCATION);      if (status !== "granted") {
-  //       console.log("Location permission not granted");
-  //       return;
-  //     }
-  //     const location =  await Location.getCurrentPositionAsync({})
-    // mapRef.current.animateToRegion({
-    //   latitude: location.coords.latitude,
-    //   longitude: location.coords.longitude,
-    //   latitudeDelta: LATITUDE_DELTA,
-    //   longitudeDelta: LONGITUDE_DELTA,
-    // });
-    // onUserLocationChange={(e) => {
-    //     console.log("onUserLocationChange", e.nativeEvent.coordinate);
-
-  //       setState({
-  //         originCords: {
-  //           latitude: location.coordinate.latitude,
-  //           longitude: locationcoordinate.longitude,
-  //           latitudeDelta: LATITUDE_DELTA,
-  //           longitudeDelta: LONGITUDE_DELTA,
-  //         }
-  //       });
-  //     } catch (error) {
-  //       console.log("Error getting location:", error);
-  //     }
-  // }
-
   const centerMap = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
