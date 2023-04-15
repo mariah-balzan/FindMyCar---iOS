@@ -26,7 +26,7 @@ import * as Location from "expo-location";
 import ContactUs from "./ContactUs";
 import { auth, firestore } from "../firebase";
 import { getDistance } from "geolib";
-// import {GOOGLE_MAPS_KEY} from '@env'
+import {GOOGLE_MAPS_KEY} from '@env'
 
 const Tab = createBottomTabNavigator();
 
@@ -113,20 +113,18 @@ const HomeFunction = ({ navigation }) => {
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA,
     },
-    // destinationCords: {
-    //   latitude: 35.898020,
-    //   longitude:14.476714,
-    //     latitudeDelta: 0.00922,
-    //     longitudeDelta: 0.00421,
-    // }
+    destinationCords: null, //Default no destination coordinate
   });
-  // const { originCords, destinationCords } = state
-  const { originCords } = state;
+  const { originCords, destinationCords } = state
+  //For destination:
+  const [isLocationChosen, setIsLocationChosen] = useState(false);
+
+  // const { originCords } = state;
   const mapRef = useRef();
-  const carImage = require("../assets/car.png");
+  const homePin = require("../assets/homePin2.png");
 
   const onPressLocation = () => {
-    navigation.navigate("chooseLocation", { getCoordinates: fetchValues });
+    navigation.navigate("chooseLocation", { getCoordinates: fetchValues , originCords: originCords});
   };
 
   const fetchValues = (data) => {
@@ -135,11 +133,12 @@ const HomeFunction = ({ navigation }) => {
         latitude: data.originCords.latitude,
         longitude: data.originCords.longitude,
       },
-      // destinationCords:{
-      //   latitude: data.destinationCords.latitude,
-      //   longitude: data.destinationCords.longitude,
-      // }
+      destinationCords:{
+        latitude: data.destinationCords.latitude,
+        longitude: data.destinationCords.longitude,
+      }
     });
+    setIsLocationChosen(true);
     console.log("data=>>>>>", data);
   };
 
@@ -148,24 +147,19 @@ const HomeFunction = ({ navigation }) => {
       const { status } = await Location.requestForegroundPermissionsAsync()
       if (status === "granted") {
         const location = await Location.getCurrentPositionAsync({});
-        setState({
+        setState((prevState) => ({
+          ...prevState,
           originCords: {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
           },
-          // destinationCords: {
-          //   latitude: 35.89802,
-          //   longitude: 14.476714,
-          //   latitudeDelta: 0.00922,
-          //   longitudeDelta: 0.00421,
-          // },
-        });
+        }));
       }
     };
     getLocationAsync();
-  }, []);
+  },[state.originCords,state.destinationCords]);  //these dependencies ensure that the hook is triggered whenever either of these values change. 
 
   useEffect(() => {
     const fetchMapData = async () => {
@@ -254,7 +248,8 @@ const HomeFunction = ({ navigation }) => {
           longitude: location.coords.longitude,
           latitudeDelta: LATITUDE_DELTA,
           longitudeDelta: LONGITUDE_DELTA,
-        }
+        },
+        destinationCords:state.destinationCords,
       });
       mapRef.current.animateToRegion({
         latitude: location.coords.latitude,
@@ -262,13 +257,11 @@ const HomeFunction = ({ navigation }) => {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       });
-      console.log(originCords)
+      console.log("Recentred: ",originCords)
     } catch (error) {
       console.log("Error getting location:", error);
     }
   }
-  
-  
 
   return (
     <View
@@ -320,12 +313,14 @@ const HomeFunction = ({ navigation }) => {
           style={{width:50, height:50, marginEnd:'3%', marginTop:'3%'}}source= {require("../assets/recentre.png")} 
         />
         </TouchableOpacity>
-          <Marker
-            coordinate={markerCoordinates}
-          />
           {markerCoordinates && (
             <>
-              <Marker coordinate={markerCoordinates} />
+              <Marker 
+              coordinate={markerCoordinates} 
+              image={homePin} 
+              style={{width:10, height:10}}
+              centerOffset={{ x: 0, y: -20 }}
+              />
               <Circle
                 center={markerCoordinates}
                 radius={area}
@@ -334,15 +329,15 @@ const HomeFunction = ({ navigation }) => {
               />
             </>
           )}
-          {/* <Marker
+          <Marker
           coordinate={destinationCords} 
-          image={carImage}/> */}
+          />
 
           {/* <MapViewDirections
             origin = {originCords}
-            destination={markerCoordinates}
+            destination={destinationCords}
             apikey = {GOOGLE_MAPS_KEY}
-            strokeWidth={3}
+            strokeWidth={6}
             strokeColor="#FFB703"
             optimizeWaypoints={true}
             onReady={result =>  {

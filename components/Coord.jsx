@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-// import {GOOGLE_MAPS_KEY} from '@env';
+import {GOOGLE_MAPS_KEY} from '@env';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 
@@ -18,7 +18,7 @@ export default function Coord({placeholderText,fetchAddress }) {
             placeholder={placeholderText}
             fetchDetails = {true}
             query={{
-            //   key: GOOGLE_MAPS_KEY,
+              key: GOOGLE_MAPS_KEY,
               language: 'en',
             }}
             onPress={onPressAddress}
@@ -33,7 +33,6 @@ export default function Coord({placeholderText,fetchAddress }) {
 const styles = StyleSheet.create({
     containerStyle: {
         backgroundColor: 'white',
-        marginTop: '5%'
     },
     textInputStyle: {
         height: 48,
