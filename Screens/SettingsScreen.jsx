@@ -25,13 +25,13 @@ const SECTIONS = [
           value: false,
           type: 'boolean_dark_mode',
         },
-        {
-          icon: 'volume-2',
-          color: '#fd2d54',
-          label: 'Text-to-speech',
-          value: false,
-          type: 'boolean_text_to_speech',
-        },
+        // {
+        //   icon: 'volume-2',
+        //   color: '#fd2d54',
+        //   label: 'Text-to-speech',
+        //   value: false,
+        //   type: 'boolean_text_to_speech',
+        // },
         { icon: 'mail', 
         color: '#8e8d91', 
         label: 'Contact Us', 
@@ -74,9 +74,9 @@ export default function SettingsScreen({ navigation }) {
                           }}
                         />}
 
-                        {type === 'boolean_text_to_speech' && <Switch
+                        {/* {type === 'boolean_text_to_speech' && <Switch
                           value = {value}
-                        />}
+                        />} */}
                       <TouchableOpacity onPress={() => navigation.navigate("ContactUs")}>
                         {type === 'link' && (
                           <FeatherIcon

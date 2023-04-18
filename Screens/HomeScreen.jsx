@@ -26,6 +26,7 @@ import * as Location from "expo-location";
 import ContactUs from "./ContactUs";
 import { auth, firestore } from "../firebase";
 import { getDistance } from "geolib";
+import * as Speech from 'expo-speech';
 import {GOOGLE_MAPS_KEY} from '@env'
 
 const Tab = createBottomTabNavigator();
@@ -113,19 +114,24 @@ const HomeFunction = ({ navigation }) => {
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA,
     },
+    // destinationCords: {
+    //   latitude: 35.898020,
+    //   longitude:14.476714,
+    //     latitudeDelta: 0.00922,
+    //     longitudeDelta: 0.00421,
+    // }
     destinationCords: null, //Default no destination coordinate
   });
   const { originCords, destinationCords } = state
-  //For destination:
-  const [isLocationChosen, setIsLocationChosen] = useState(false);
-
   // const { originCords } = state;
   const mapRef = useRef();
+  const carImage = require("../assets/car.png");
   const homePin = require("../assets/homePin2.png");
-
   const onPressLocation = () => {
-    navigation.navigate("chooseLocation", { getCoordinates: fetchValues , originCords: originCords});
+    navigation.navigate("chooseLocation", { getCoordinates: fetchValues, originCords: originCords });
   };
+  //For destination:
+  const [isLocationChosen, setIsLocationChosen] = useState(false);
 
   const fetchValues = (data) => {
     setState({
@@ -133,6 +139,10 @@ const HomeFunction = ({ navigation }) => {
         latitude: data.originCords.latitude,
         longitude: data.originCords.longitude,
       },
+      // destinationCords:{
+      //   latitude: data.destinationCords.latitude,
+      //   longitude: data.destinationCords.longitude,
+      // }
       destinationCords:{
         latitude: data.destinationCords.latitude,
         longitude: data.destinationCords.longitude,
@@ -155,6 +165,13 @@ const HomeFunction = ({ navigation }) => {
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
           },
+          // destinationCords: {
+          //   latitude: 35.89802,
+          //   longitude: 14.476714,
+          //   latitudeDelta: 0.00922,
+          //   longitudeDelta: 0.00421,
+          // },
+       
         }));
       }
     };
@@ -176,6 +193,11 @@ const HomeFunction = ({ navigation }) => {
     fetchMapData();
   }, []);
 
+  //Initialize the Speech engine
+  useEffect(() => {
+    Speech.speak('', { language: 'en-US' });
+  }, []);
+
   //Geofence:
   const [isInsideGeofence, setIsInsideGeofence] = useState(false);
   const [wasInsideGeofence, setWasInsideGeofence] = useState(false);
@@ -190,8 +212,8 @@ const HomeFunction = ({ navigation }) => {
           [markerCoordinates.latitude, markerCoordinates.longitude]
         );
 
-        console.log("Distance:", distance);
-        console.log("Area:", area);
+        // console.log("Distance:", distance);
+        // console.log("Area:", area);
 
         const isInside = distance <= area;
 
@@ -199,24 +221,28 @@ const HomeFunction = ({ navigation }) => {
           setIsInsideGeofence(true);
           setWasInsideGeofence(true);
           setAlertDisplayed(false);
-          console.log("Inside geofence");
+          //console.log("Inside geofence");
           Alert.alert("Alert", "You are inside the geofence area!");
+          Speech.speak("You are inside the geofence area!", { language: 'en-US' });
         } else if (!isInside && wasInsideGeofence) {
           setIsInsideGeofence(false);
           setWasInsideGeofence(false);
           setAlertDisplayed(false);
-          console.log("Outside geofence");
+          //console.log("Outside geofence");
+         Speech.speak("You are outside the geofence area! Get directions back home by clicking the Choose Location button.", { language: 'en-US' });
         } else if (!isInside && !wasInsideGeofence && !alertDisplayed) {
           setAlertDisplayed(true);
-          console.log("Outside geofence");
-          Alert.alert("Alert", "You are outside the geofence area!");
-        } else {
-          console.log(
-            "Still",
-            wasInsideGeofence ? "Inside" : "Outside",
-            "geofence"
-          );
-        }
+          //console.log("Outside geofence");
+          Alert.alert("Warning", "You are outside the geofence area! Get directions back home by clicking the Choose Location button.");
+         Speech.speak("You are outside the geofence area! Get directions back home by clicking the Choose Location button.", { language: 'en-US' });
+        } 
+        // else {
+        //   console.log(
+        //     "Still",
+        //     wasInsideGeofence ? "Inside" : "Outside",
+        //     "geofence"
+        //   );
+        // }
       }
     };
     checkIfOutsideGeofence();
@@ -230,8 +256,37 @@ const HomeFunction = ({ navigation }) => {
   ]);
 
   const toggleGeofence = (value) => {
-    setGeofenceEnabled(value);
-    console.log("Switch", value);
+    if (!value) {
+      // Speak the warning message
+     Speech.speak('Are you sure you want to disable the geofence?', { language: 'en-US' });
+
+      Alert.alert(
+        'Warning',
+        'Are you sure you want to disable the geofence?',
+        [
+          { text: 'Cancel', onPress: () => setGeofenceEnabled(true) },
+          {
+            text: 'Disable',
+            onPress: () => {
+              setGeofenceEnabled(false);
+              Speech.speak(
+                'Remember you will still be monitored. Turn on the geofence when you return home',
+                { language: 'en-US' }
+              );
+              Alert.alert(
+                'Reminder',
+                'Remember you will still be monitored. Turn on the geofence when you return home.',
+                [{ text: 'OK' }],
+                { cancelable: false }
+              );
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    } else {
+      setGeofenceEnabled(true);
+    }
   };
 
   const centerMap = async () => {
@@ -273,7 +328,7 @@ const HomeFunction = ({ navigation }) => {
         </Text>
         <View style={styles.info}>
         <Text style={[styles.infoText, { color: theme.color }]}>
-          You can turn off the geofence to stop alerts by pressing the switch
+          You can stop geofence alerts by turning off the switch.
         </Text>
         <Switch
           style={{marginStart:'3%', marginTop:'5%'}}
@@ -296,7 +351,7 @@ const HomeFunction = ({ navigation }) => {
           region={originCords}
           showsUserLocation={true}
           onUserLocationChange={(e) => {
-            console.log("onUserLocationChange", e.nativeEvent.coordinate);
+            //console.log("onUserLocationChange", e.nativeEvent.coordinate);
 
             setState({
               originCords: {
@@ -313,6 +368,9 @@ const HomeFunction = ({ navigation }) => {
           style={{width:50, height:50, marginEnd:'3%', marginTop:'3%'}}source= {require("../assets/recentre.png")} 
         />
         </TouchableOpacity>
+          {/* <Marker
+            coordinate={markerCoordinates}
+          /> */}
           {markerCoordinates && (
             <>
               <Marker 
@@ -329,11 +387,29 @@ const HomeFunction = ({ navigation }) => {
               />
             </>
           )}
-          <Marker
+          {/* <Marker
           coordinate={destinationCords} 
-          />
+          /> */}
 
-          {/* <MapViewDirections
+          <MapViewDirections
+            origin = {originCords}
+            destination={markerCoordinates}
+            apikey = {GOOGLE_MAPS_KEY}
+            strokeWidth={6}
+            strokeColor="#FFB703"
+            optimizeWaypoints={true}
+            onReady={result =>  {
+            mapRef.current.fitToCoordinates(result.coordinates, {
+                edgePadding: {
+                right: 30,
+                bottom: 300,
+                left: 30,
+                top: 100    
+                }
+          })
+        }} 
+            />
+            <MapViewDirections
             origin = {originCords}
             destination={destinationCords}
             apikey = {GOOGLE_MAPS_KEY}
@@ -350,7 +426,7 @@ const HomeFunction = ({ navigation }) => {
                 }
           })
         }} 
-            /> */}
+            />
         </MapView>
       </View>
     </View>
@@ -406,7 +482,8 @@ const styles = StyleSheet.create({
     marginBottom: "5%",
     marginTop: "3%",
     color: "#FFB703",
-    fontSize: "24",
+    fontSize: "27",
+    paddingHorizontal:'3%',
     fontFamily: "Comfortaa",
   },
   info:{
@@ -415,7 +492,7 @@ const styles = StyleSheet.create({
   },
   infoText:{
     color: "#FFB703",
-    fontSize: "17",
+    fontSize: "18",
     fontFamily: "Comfortaa",
     marginBottom: "7%",
     marginTop: "1%",

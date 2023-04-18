@@ -1,9 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Dimensions, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Dimensions, TextInput, KeyboardAvoidingView , Image} from 'react-native';
 import MapView, { Circle, Marker } from 'react-native-maps';
 import CustomBtn from '../components/CustomBtn';
 import { showError, showSuccess } from '../helper/helperFunction';
+import FeatherIcon from "react-native-vector-icons/Feather";
 
 export default function Address(props){
   const navigation = useNavigation();
@@ -97,9 +98,15 @@ const navigateToSignup = () => {
         behavior={Platform.OS === "ios" ? "padding" : null}  
         style={styles.bottomCard}>
       {/* <View style = {[styles.bottomCard]}> */}
+    <View style={{flexDirection:'row'}}>
+        <TouchableOpacity onPress={() => navigation.navigate("Register") }>
+        <Image source={require("../assets/backYellow.png")} style={styles.backIcon}/>
+      </TouchableOpacity>
             <Text style = {[styles.header]}>Locate your home</Text>
-            <Text style = {[styles.subtitle]}>Pin your home and add a safety geofence</Text>
-            <Text style={styles.inputTitle}>Geofence area:</Text>
+            </View>
+            <Text style = {[styles.subtitle]}>Press anywhere on the map to pin your home and add a safety geofence below.</Text>
+          <View style={{justifyContent:'center', alignItems: 'center'}}>
+            <Text style={styles.inputTitle}>Geofence Area:</Text>
               <TextInput
                 placeholder='Area'
                 value={area}
@@ -109,10 +116,10 @@ const navigateToSignup = () => {
               />
             <CustomBtn
             btnText = "Save Address"
-            btnStyle = {{width:'45%', marginBottom:'-3%'}}
+            btnStyle = {{width:'45%'}}
             onPress = {handleSavePress}
       />
-          {/* </View> */}
+          </View>
           </KeyboardAvoidingView>
       <View style ={{flex:0.7}}>
       <MapView
@@ -157,29 +164,51 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection:'column',
-   justifyContent:'center',
+   justifyContent:'center'
   },
   bottomCard:{
-    flex:0.3,
+    flex:0.4,
     backgroundColor: 'white',
     width: '100%',
     borderRadius:30,
     paddingTop:'13%',
-    alignItems:'center'
+    padding: "4%",
+    //alignItems:'flex-start',
+  },
+  backIcon: {
+    width: 32, 
+    height: 32,
+    margin: '4%',
+    marginTop: '13%'
   },
   header: {
-    marginBottom:'5%', 
+    // marginBottom:'5%', 
+    // marginTop:'3%', 
+    // color:'#023047', 
+    // fontSize:'24', 
+    // fontFamily:'Comfortaa',
+    // justifyContent:'center'
+    marginBottom: "5%",
+    color: "#023047",
     marginTop:'3%', 
-    color:'#023047', 
-    fontSize:'24', 
-    fontFamily:'Comfortaa'
+    fontSize: "28",
+    fontFamily: "Comfortaa",
   },
   subtitle:{
     marginBottom:'5%', 
-    marginTop:'3%', 
+    paddingHorizontal:'1%',
     color:'#023047', 
     fontSize:'20', 
-    fontFamily:'Comfortaa'
+    fontFamily:'Comfortaa',
+    textAlign:'justify'
+  },
+  inputTitle:{
+    //marginBottom:'5%', 
+    paddingHorizontal:'1%',
+    color:'#023047', 
+    fontSize:'18', 
+    fontFamily:'Comfortaa',
+    textAlign:'justify'
   },
   saveButtonContainer: {
         position: 'absolute',

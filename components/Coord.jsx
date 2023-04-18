@@ -33,6 +33,7 @@ export default function Coord({placeholderText,fetchAddress }) {
 const styles = StyleSheet.create({
     containerStyle: {
         backgroundColor: 'white',
+        marginHorizontal:'5%'
     },
     textInputStyle: {
         height: 48,
