@@ -10,7 +10,7 @@ export default function Address(props){
   const navigation = useNavigation();
   const screen = Dimensions.get('window');
   const ASPECT_RATIO = screen.width / screen.height;
-  const LATITUDE_DELTA =  0.00922;
+  const LATITUDE_DELTA = 0.0025;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   
   //Current loc pin

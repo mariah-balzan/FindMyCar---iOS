@@ -99,7 +99,7 @@ const HomeFunction = ({ navigation }) => {
   const theme = useContext(themeContext);
   const screen = Dimensions.get("window");
   const ASPECT_RATIO = screen.width / screen.height;
-  const LATITUDE_DELTA = 0.005;
+  const LATITUDE_DELTA = 0.0025;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
   //Retrieve marker and geo area from firestore:
@@ -134,21 +134,23 @@ const HomeFunction = ({ navigation }) => {
   const [isLocationChosen, setIsLocationChosen] = useState(false);
 
   const fetchValues = (data) => {
-    setState({
+    setState(prevState => ({
+      ...prevState,
       originCords: {
         latitude: data.originCords.latitude,
         longitude: data.originCords.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
       },
-      // destinationCords:{
-      //   latitude: data.destinationCords.latitude,
-      //   longitude: data.destinationCords.longitude,
-      // }
       destinationCords:{
         latitude: data.destinationCords.latitude,
         longitude: data.destinationCords.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
       }
-    });
+    }));
     setIsLocationChosen(true);
+    console.log("Destination coordinates", data.destinationCords);
     console.log("data=>>>>>", data);
   };
 
@@ -171,7 +173,12 @@ const HomeFunction = ({ navigation }) => {
           //   latitudeDelta: 0.00922,
           //   longitudeDelta: 0.00421,
           // },
-       
+          // destinationCords: {
+          //   latitude: prevState.destinationCords?.latitude,
+          //   longitude: prevState.destinationCords?.longitude,
+          //   latitudeDelta: LATITUDE_DELTA,
+          //   longitudeDelta: LONGITUDE_DELTA,
+          // },
         }));
       }
     };
@@ -197,7 +204,6 @@ const HomeFunction = ({ navigation }) => {
   useEffect(() => {
     Speech.speak('', { language: 'en-US' });
   }, []);
-
   //Geofence:
   const [isInsideGeofence, setIsInsideGeofence] = useState(false);
   const [wasInsideGeofence, setWasInsideGeofence] = useState(false);
@@ -229,12 +235,12 @@ const HomeFunction = ({ navigation }) => {
           setWasInsideGeofence(false);
           setAlertDisplayed(false);
           //console.log("Outside geofence");
-         Speech.speak("You are outside the geofence area! Get directions back home by clicking the Choose Location button.", { language: 'en-US' });
+        //  Speech.speak("You are outside the geofence area! Get directions back home by clicking the Choose Location button.", { language: 'en-US' });
         } else if (!isInside && !wasInsideGeofence && !alertDisplayed) {
           setAlertDisplayed(true);
           //console.log("Outside geofence");
           Alert.alert("Warning", "You are outside the geofence area! Get directions back home by clicking the Choose Location button.");
-         Speech.speak("You are outside the geofence area! Get directions back home by clicking the Choose Location button.", { language: 'en-US' });
+        //  Speech.speak("You are outside the geofence area! Get directions back home by clicking the Choose Location button.", { language: 'en-US' });
         } 
         // else {
         //   console.log(
@@ -313,6 +319,7 @@ const HomeFunction = ({ navigation }) => {
         longitudeDelta: LONGITUDE_DELTA,
       });
       console.log("Recentred: ",originCords)
+      //ADD ALERT Sound
     } catch (error) {
       console.log("Error getting location:", error);
     }
@@ -360,6 +367,9 @@ const HomeFunction = ({ navigation }) => {
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
               },
+              destinationCords:state.destinationCords
+
+              
             });
           }}
         >
@@ -382,8 +392,9 @@ const HomeFunction = ({ navigation }) => {
               <Circle
                 center={markerCoordinates}
                 radius={area}
-                fillColor="#FFB703"
+                fillColor="#FFB70380"
                 strokeColor="red"
+                
               />
             </>
           )}
@@ -395,38 +406,42 @@ const HomeFunction = ({ navigation }) => {
             origin = {originCords}
             destination={markerCoordinates}
             apikey = {GOOGLE_MAPS_KEY}
-            strokeWidth={6}
-            strokeColor="#FFB703"
+            strokeWidth={4}
+            strokeColor="black"
             optimizeWaypoints={true}
-            onReady={result =>  {
-            mapRef.current.fitToCoordinates(result.coordinates, {
-                edgePadding: {
-                right: 30,
-                bottom: 300,
-                left: 30,
-                top: 100    
-                }
-          })
-        }} 
+        //     onReady={result =>  {
+        //     mapRef.current.fitToCoordinates(result.coordinates, {
+        //         edgePadding: {
+        //         right: 30,
+        //         bottom: 300,
+        //         left: 30,
+        //         top: 100    
+        //         }
+        //   })
+        // }} 
             />
+            {isLocationChosen && (
             <MapViewDirections
             origin = {originCords}
             destination={destinationCords}
             apikey = {GOOGLE_MAPS_KEY}
-            strokeWidth={6}
-            strokeColor="#FFB703"
+            strokeWidth={7}
+            // strokeColor="#FFB703"
+            strokeColor="red"
+            lineDashPattern={[0.1,15]}
             optimizeWaypoints={true}
-            onReady={result =>  {
-            mapRef.current.fitToCoordinates(result.coordinates, {
-                edgePadding: {
-                right: 30,
-                bottom: 300,
-                left: 30,
-                top: 100    
-                }
-          })
-        }} 
+        //     onReady={result =>  {
+        //       mapRef.current.fitToCoordinates(result.coordinates, {
+        //         edgePadding: {
+        //         right: 30,
+        //         bottom: 300,
+        //         left: 30,
+        //         top: 100    
+        //         }
+        //   })
+        // }} 
             />
+            )}
         </MapView>
       </View>
     </View>

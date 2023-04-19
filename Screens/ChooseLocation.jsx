@@ -286,11 +286,11 @@ const checkValid = () =>{
             Enter your destination below
           </Text>
           </View>
-          {/* <Text style={[styles.infoText, { color: theme.color }]}>
+          <Text style={[styles.infoText, { color: theme.color }]}>
           The origin is your current location and the direction will be generated. 
-          </Text> */}
+          </Text>
           {/* </View> */}
-          {/* <Text style={[styles.inputs, { color: theme.color }]}>
+          <Text style={[styles.inputs, { color: theme.color }]}>
 
           Origin: Current location
         </Text>
@@ -299,7 +299,7 @@ const checkValid = () =>{
 
         </Text>
 
-          </Text> */}
+          {/* </Text> */}
 
         <Coord
           placeholderText={"Enter destination"}
@@ -345,23 +345,6 @@ const checkValid = () =>{
       }
 
 const styles = StyleSheet.create({
-  // container:{
-  //  flex:1,
-  //  flexDirection:'column',
-  //  justifyContent:'center',
-  //   paddingTop:'14%',
-  //   padding:'5%',
-  //   backgroundColor:'#F3F3F3'
-  // container: {
-  //   flex: 1,
-  //   flexDirection: "column",
-  //   justifyContent: "center",
-  //   paddingTop: "14%",
-  //   padding: "5%",
-  //   backgroundColor: "#F3F3F3",
-  //  // paddingTop: "14%",
-  //   padding: "5%",
-  //   backgroundColor: "#F3F3F3",
   container: {
     flex: 1,
     flexDirection: "column",
