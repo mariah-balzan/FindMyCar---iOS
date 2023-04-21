@@ -7,7 +7,7 @@ import {
   Switch,
   Alert,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -15,7 +15,7 @@ import ProfileScreen from "./ProfileScreen";
 import SettingsScreen from "./SettingsScreen";
 import FlashMessage from "react-native-flash-message";
 import ChooseLocation from "./ChooseLocation";
-import * as Permissions from 'expo-permissions';
+import * as Permissions from "expo-permissions";
 import MapView, { Circle, Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import CustomBtn from "../components/CustomBtn";
@@ -26,8 +26,8 @@ import * as Location from "expo-location";
 import ContactUs from "./ContactUs";
 import { auth, firestore } from "../firebase";
 import { getDistance } from "geolib";
-import * as Speech from 'expo-speech';
-import {GOOGLE_MAPS_KEY} from '@env'
+import * as Speech from "expo-speech";
+import { GOOGLE_MAPS_KEY } from "@env";
 
 const Tab = createBottomTabNavigator();
 
@@ -122,19 +122,102 @@ const HomeFunction = ({ navigation }) => {
     // }
     destinationCords: null, //Default no destination coordinate
   });
-  const { originCords, destinationCords } = state
+  const { originCords, destinationCords } = state;
   // const { originCords } = state;
   const mapRef = useRef();
   const carImage = require("../assets/car.png");
   const homePin = require("../assets/homePin2.png");
   const onPressLocation = () => {
-    navigation.navigate("chooseLocation", { getCoordinates: fetchValues, originCords: originCords });
+    navigation.navigate("chooseLocation", {
+      getCoordinates: fetchValues,
+      originCords: originCords,
+    });
   };
   //For destination:
   const [isLocationChosen, setIsLocationChosen] = useState(false);
+  //For alert:
+  const [isCardVisible, setIsCardVisible] = useState(false);
+  const onPressDismiss = () => {
+    Speech.stop();
+    setIsCardVisible(false);
+    console.log("dismiss");
+  };
+
+  //Alert
+  const Card = ({ onPressDismiss }) => {
+    useEffect(() => {
+      if (isCardVisible) {
+        Speech.speak("Reminders.  Make sure to check these off before leaving the house:,1. Close all windows, doors and taps, 2. Switch off all appliances and switches, 3. Take all your necessary belongings for your outing including: keys, wallet, etc., 4. Take necessary aids and medication including: glasses, walking stick, EpiPen, Glucagon, and pills.", {
+          language: "en-US",
+        });
+      }
+    }, [isCardVisible]);
+    return (
+      <View
+        style={{
+          backgroundColor: "white",
+          marginTop:'5%',
+          flex: 1,
+          flexDirection: "column",
+          alignItems: "center",
+          alignSelf: "center",
+          width: "80%",
+          height: "80%",
+          marginBottom:'5%'
+        }}
+      >
+        <View style={{ flex: 1, flexDirection: "column" }}>
+          <Text
+            style={{
+              marginBottom: "5%",
+              marginTop: "9%",
+              // color: "#FFB703",
+              color: "black",
+              fontSize: "30",
+              paddingHorizontal: "3%",
+              fontFamily: "Comfortaa",
+              alignItems: "center",
+              justifyContent: "center",
+              alignItems: "center",
+              // justifyContent:'center',
+              alignSelf: "center",
+            }}
+          >
+            Reminders
+          </Text>
+          <Text
+            style={{
+              // color: "#FFB703",
+              color: "black",
+              fontSize: "18",
+              fontFamily: "Comfortaa",
+              marginBottom: "5%",
+              marginHorizontal: "3.5%",
+              textAlign: "justify",
+              paddingHorizontal: "1%",
+            }}
+          >
+            Make sure to check these off before leaving the house: {"\n\n"}1.
+            Close all windows, doors and taps{"\n\n"}2. Switch off all appliances
+            and switches{"\n\n"}3. Take all your necessary belongings for your
+            outing including: keys, wallet, etc. {"\n\n"}4. Take necessary aids
+            and medication including: glasses, walking stick, EpiPen, Glucagon,
+            and pills. {"\n\n"}
+          </Text>
+        </View>
+        <View style={{ justifyContent: "flex-end", marginBottom: "3%", marginTop:'1%' }}>
+          <CustomBtn
+            btnText="Dismiss"
+            btnStyle={{ width: "50%"}}
+            onPress={onPressDismiss}
+          />
+        </View>
+      </View>
+    );
+  };
 
   const fetchValues = (data) => {
-    setState(prevState => ({
+    setState((prevState) => ({
       ...prevState,
       originCords: {
         latitude: data.originCords.latitude,
@@ -142,21 +225,23 @@ const HomeFunction = ({ navigation }) => {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
-      destinationCords:{
+      destinationCords: {
         latitude: data.destinationCords.latitude,
         longitude: data.destinationCords.longitude,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
-      }
+      },
     }));
     setIsLocationChosen(true);
+    //setShowAlert(true);
+    setIsCardVisible(true);
     console.log("Destination coordinates", data.destinationCords);
     console.log("data=>>>>>", data);
   };
 
   useEffect(() => {
     const getLocationAsync = async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync()
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
         const location = await Location.getCurrentPositionAsync({});
         setState((prevState) => ({
@@ -167,23 +252,11 @@ const HomeFunction = ({ navigation }) => {
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
           },
-          // destinationCords: {
-          //   latitude: 35.89802,
-          //   longitude: 14.476714,
-          //   latitudeDelta: 0.00922,
-          //   longitudeDelta: 0.00421,
-          // },
-          // destinationCords: {
-          //   latitude: prevState.destinationCords?.latitude,
-          //   longitude: prevState.destinationCords?.longitude,
-          //   latitudeDelta: LATITUDE_DELTA,
-          //   longitudeDelta: LONGITUDE_DELTA,
-          // },
         }));
       }
     };
     getLocationAsync();
-  },[state.originCords,state.destinationCords]);  //these dependencies ensure that the hook is triggered whenever either of these values change. 
+  }, [state.originCords, state.destinationCords]); //these dependencies ensure that the hook is triggered whenever either of these values change.
 
   useEffect(() => {
     const fetchMapData = async () => {
@@ -202,7 +275,7 @@ const HomeFunction = ({ navigation }) => {
 
   //Initialize the Speech engine
   useEffect(() => {
-    Speech.speak('', { language: 'en-US' });
+    Speech.speak("", { language: "en-US" });
   }, []);
   //Geofence:
   const [isInsideGeofence, setIsInsideGeofence] = useState(false);
@@ -229,19 +302,24 @@ const HomeFunction = ({ navigation }) => {
           setAlertDisplayed(false);
           //console.log("Inside geofence");
           Alert.alert("Alert", "You are inside the geofence area!");
-          Speech.speak("You are inside the geofence area!", { language: 'en-US' });
+          Speech.speak("You are inside the geofence area!", {
+            language: "en-US",
+          });
         } else if (!isInside && wasInsideGeofence) {
           setIsInsideGeofence(false);
           setWasInsideGeofence(false);
           setAlertDisplayed(false);
           //console.log("Outside geofence");
-        //  Speech.speak("You are outside the geofence area! Get directions back home by clicking the Choose Location button.", { language: 'en-US' });
+           Speech.speak("You are outside the geofence area! Follow the black direction back home or click the Choose Location button to go to a new destination.", { language: 'en-US' });
         } else if (!isInside && !wasInsideGeofence && !alertDisplayed) {
           setAlertDisplayed(true);
           //console.log("Outside geofence");
-          Alert.alert("Warning", "You are outside the geofence area! Get directions back home by clicking the Choose Location button.");
-        //  Speech.speak("You are outside the geofence area! Get directions back home by clicking the Choose Location button.", { language: 'en-US' });
-        } 
+          Alert.alert(
+            "Warning",
+            "You are outside the geofence area! Follow the black direction back home or click the Choose Location button to go to a new destination."
+          );
+          Speech.speak("You are outside the geofence area! Follow the black direction back home or click the Choose Location button to go to a new destination.", { language: 'en-US' });
+        }
         // else {
         //   console.log(
         //     "Still",
@@ -264,25 +342,27 @@ const HomeFunction = ({ navigation }) => {
   const toggleGeofence = (value) => {
     if (!value) {
       // Speak the warning message
-     Speech.speak('Are you sure you want to disable the geofence?', { language: 'en-US' });
+      Speech.speak("Are you sure you want to disable the geofence?", {
+        language: "en-US",
+      });
 
       Alert.alert(
-        'Warning',
-        'Are you sure you want to disable the geofence?',
+        "Warning",
+        "Are you sure you want to disable the geofence?",
         [
-          { text: 'Cancel', onPress: () => setGeofenceEnabled(true) },
+          { text: "Cancel", onPress: () => setGeofenceEnabled(true) },
           {
-            text: 'Disable',
+            text: "Disable",
             onPress: () => {
               setGeofenceEnabled(false);
               Speech.speak(
-                'Remember you will still be monitored. Turn on the geofence when you return home',
-                { language: 'en-US' }
+                "Remember you will still be monitored. Turn on the geofence when you return home",
+                { language: "en-US" }
               );
               Alert.alert(
-                'Reminder',
-                'Remember you will still be monitored. Turn on the geofence when you return home.',
-                [{ text: 'OK' }],
+                "Reminder",
+                "Remember you will still be monitored. Turn on the geofence when you return home.",
+                [{ text: "OK" }],
                 { cancelable: false }
               );
             },
@@ -310,7 +390,7 @@ const HomeFunction = ({ navigation }) => {
           latitudeDelta: LATITUDE_DELTA,
           longitudeDelta: LONGITUDE_DELTA,
         },
-        destinationCords:state.destinationCords,
+        destinationCords: state.destinationCords,
       });
       mapRef.current.animateToRegion({
         latitude: location.coords.latitude,
@@ -318,39 +398,43 @@ const HomeFunction = ({ navigation }) => {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       });
-      console.log("Recentred: ",originCords)
+      console.log("Recentred: ", originCords);
       //ADD ALERT Sound
     } catch (error) {
       console.log("Error getting location:", error);
     }
-  }
+  };
 
   return (
     <View
-      style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      style={[styles.container, { backgroundColor: theme.backgroundColor }]}
+    >
       <View
-        style={[styles.bottomCard, { backgroundColor: theme.backgroundColor }]}>
+        style={[styles.bottomCard, { backgroundColor: theme.backgroundColor }]}
+      >
         <Text style={[styles.header, { color: theme.color }]}>
           Where do you wish to go?
         </Text>
         <View style={styles.info}>
-        <Text style={[styles.infoText, { color: theme.color }]}>
-          You can stop geofence alerts by turning off the switch.
-        </Text>
-        <Switch
-          style={{marginStart:'3%', marginTop:'5%'}}
-          value={geofenceEnabled}
-          onValueChange={toggleGeofence}
-          trackColor={geofenceEnabled ? "#D3D3D3" : "#5BC236" }
-        />
+          <Text style={[styles.infoText, { color: theme.color }]}>
+            You can stop geofence alerts by turning off the switch.
+          </Text>
+          <Switch
+            style={{ marginStart: "3%", marginTop: "5%" }}
+            value={geofenceEnabled}
+            onValueChange={toggleGeofence}
+            trackColor={geofenceEnabled ? "#D3D3D3" : "#5BC236"}
+          />
         </View>
         <CustomBtn
           btnText="Choose your location"
-          btnStyle={{ width: "66%"}}
+          btnStyle={{ width: "66%" }}
           onPress={onPressLocation}
         />
       </View>
-      <View style={[{ flex: 0.72 }, { backgroundColor: theme.backgroundColor }]}>
+      <View
+        style={[{ flex: 0.72 }, { backgroundColor: theme.backgroundColor }]}
+      >
         <MapView
           ref={mapRef}
           userInterfaceStyle={theme.userInterfaceStyle}
@@ -367,40 +451,40 @@ const HomeFunction = ({ navigation }) => {
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
               },
-              destinationCords:state.destinationCords
-
-              
+              destinationCords: state.destinationCords,
             });
           }}
         >
-          <TouchableOpacity style={{alignItems:'flex-end'}} onPress={()=> centerMap()}>
-          <Image
-          style={{width:50, height:50, marginEnd:'3%', marginTop:'3%'}}source= {require("../assets/recentre.png")} 
-        />
-        </TouchableOpacity>
-          {/* <Marker
-            coordinate={markerCoordinates}
-          /> */}
+          <TouchableOpacity
+            style={{ alignItems: "flex-end" }}
+            onPress={() => centerMap()}
+          >
+            <Image
+              style={{
+                width: 50,
+                height: 50,
+                marginEnd: "3%",
+                marginTop: "3%",
+              }}
+              source={require("../assets/recentre.png")}
+            />
+          </TouchableOpacity>
           {markerCoordinates && (
             <>
-              <Marker 
-              coordinate={markerCoordinates} 
-              image={homePin} 
-              style={{width:10, height:10}}
-              centerOffset={{ x: 0, y: -20 }}
+              <Marker
+                coordinate={markerCoordinates}
+                image={homePin}
+                style={{ width: 10, height: 10 }}
+                centerOffset={{ x: 0, y: -20 }}
               />
               <Circle
                 center={markerCoordinates}
                 radius={area}
                 fillColor="#FFB70380"
                 strokeColor="red"
-                
               />
             </>
           )}
-          {/* <Marker
-          coordinate={destinationCords} 
-          /> */}
 
           <MapViewDirections
             origin = {originCords}
@@ -409,40 +493,41 @@ const HomeFunction = ({ navigation }) => {
             strokeWidth={4}
             strokeColor="black"
             optimizeWaypoints={true}
-        //     onReady={result =>  {
-        //     mapRef.current.fitToCoordinates(result.coordinates, {
-        //         edgePadding: {
-        //         right: 30,
-        //         bottom: 300,
-        //         left: 30,
-        //         top: 100    
-        //         }
-        //   })
-        // }} 
             />
-            {isLocationChosen && (
+        
+          <Marker coordinate={destinationCords} />
+
+          {isLocationChosen && (
             <MapViewDirections
-            origin = {originCords}
-            destination={destinationCords}
-            apikey = {GOOGLE_MAPS_KEY}
-            strokeWidth={7}
-            // strokeColor="#FFB703"
-            strokeColor="red"
-            lineDashPattern={[0.1,15]}
-            optimizeWaypoints={true}
-        //     onReady={result =>  {
-        //       mapRef.current.fitToCoordinates(result.coordinates, {
-        //         edgePadding: {
-        //         right: 30,
-        //         bottom: 300,
-        //         left: 30,
-        //         top: 100    
-        //         }
-        //   })
-        // }} 
+              origin={originCords}
+              destination={destinationCords}
+              apikey={GOOGLE_MAPS_KEY}
+              strokeWidth={7}
+              strokeColor="red"
+              optimizeWaypoints={true}
+              // onReady={(result) => {
+              //   mapRef.current.fitToCoordinates(result.coordinates, {
+              //     edgePadding: {
+              //       right: 30,
+              //       bottom: 300,
+              //       left: 30,
+              //       top: 100,
+              //     },
+              //   });
+              // }}
             />
-            )}
+          )} 
         </MapView>
+        {isLocationChosen && !isCardVisible ? (
+          <View style={{ position: "absolute", bottom: 20, left: 0, right: 0 }}>
+            <CustomBtn
+              btnText="Show reminders"
+              btnStyle={{ width: "46%", alignSelf: "center" }}
+              onPress={() => setIsCardVisible(true)}
+            />
+          </View>
+        ) : null}
+        {isCardVisible ? <Card onPressDismiss={onPressDismiss} /> : null}
       </View>
     </View>
   );
@@ -498,20 +583,27 @@ const styles = StyleSheet.create({
     marginTop: "3%",
     color: "#FFB703",
     fontSize: "27",
-    paddingHorizontal:'3%',
+    paddingHorizontal: "3%",
     fontFamily: "Comfortaa",
   },
-  info:{
-    flexDirection:'row',
-    paddingHorizontal:50,
+  info: {
+    flexDirection: "row",
+    paddingHorizontal: 50,
   },
-  infoText:{
+  infoText: {
     color: "#FFB703",
     fontSize: "18",
     fontFamily: "Comfortaa",
     marginBottom: "7%",
     marginTop: "1%",
-    marginHorizontal:'3.5%',
-    textAlign:'justify'
-  }
+    marginHorizontal: "3.5%",
+    textAlign: "justify",
+  },
+  card: {
+    backgroundColor: "red",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "80%",
+    height: "80%",
+  },
 });
